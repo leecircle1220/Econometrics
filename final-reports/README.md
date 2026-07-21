@@ -55,8 +55,8 @@ This project addresses the following questions:
 | Research finding | Result |
 |:---|:---|
 | Long-run relationship | 台灣對美出口與模型中的總體經濟變數存在共整合關係。 |
-| Bounds test | \(F = 81.3978\)，高於 1% 顯著水準的上界臨界值 \(5.06\)。 |
-| ECM coefficient | \(\lambda = -0.0843\)，在 1% 顯著水準下顯著。 |
+| Bounds test | $F = 81.3978$，高於 1% 顯著水準的上界臨界值 $5.06$。 |
+| ECM coefficient | $\lambda = -0.0843$，在 1% 顯著水準下顯著。 |
 | Adjustment speed | 每季約修正 \(8.43\%\) 的長期失衡。 |
 | Half-life of disequilibrium | 約 \(7.87\) 季，約 2 年。 |
 | J-curve effect | 未發現典型 J 曲線效應。 |
@@ -89,11 +89,11 @@ All model variables are transformed using natural logarithms.
 
 | Variable | Description | Unit | Integration order |
 |:---|:---|:---|:---|
-| `lex` | Taiwan's exports to the United States | Thousand U.S. dollars | \(I(1)\) |
-| `lrexr` | NTD/USD real exchange rate | NTD per U.S. dollar | \(I(1)\) |
-| `ltw_gdp` | Taiwan nominal GDP | Million NTD | \(I(1)\) |
-| `lipi` | Taiwan industrial production index | Index | \(I(0)\) |
-| `lusipi` | U.S. industrial production index | Index | \(I(1)\) |
+| `lex` | Taiwan's exports to the United States | Thousand U.S. dollars | $I(1)$ |
+| `lrexr` | NTD/USD real exchange rate | NTD per U.S. dollar | $I(1)$ |
+| `ltw_gdp` | Taiwan nominal GDP | Million NTD | $I(1)$ |
+| `lipi` | Taiwan industrial production index | Index | $I(0)$ |
+| `lusipi` | U.S. industrial production index | Index | $I(1)$ |
 
 ## Methodology
 
@@ -122,7 +122,7 @@ The bounds test evaluates whether a long-run cointegration relationship exists b
 
 | Statistic | Value |
 |:---|:---|
-| Bounds test \(F\)-statistic | 81.3978 |
+| Bounds test $F$-statistic | 81.3978 |
 | 1% upper bound critical value | 5.06 |
 | Decision | Reject the null hypothesis of no cointegration |
 
@@ -131,35 +131,20 @@ The bounds test evaluates whether a long-run cointegration relationship exists b
 After confirming cointegration, the ARDL model is reparameterized as an ECM:
 
 $$
-\begin{aligned}
-\Delta \ln(ex_t)
-&= \alpha
-+ \beta_1 \Delta \ln(rexr_t)
-+ \beta_2 \Delta \ln(rexr_{t-1})
-+ \beta_3 \Delta \ln(rexr_{t-2}) \\
-&\quad + \beta_4 \Delta \ln(tw\_gdp_t)
-+ \beta_5 \Delta \ln(ipi_t)
-+ \beta_6 \Delta \ln(usipi_t) \\
-&\quad + \lambda ECT_{t-1}
-+ \varepsilon_t
-\end{aligned}
+\Delta \ln(ex_t) = \alpha + \beta_1 \Delta \ln(rexr_t) + \beta_2 \Delta \ln(rexr_{t-1}) + \beta_3 \Delta \ln(rexr_{t-2}) + \beta_4 \Delta \ln(Y_t) + \beta_5 \Delta \ln(ipi_t) + \beta_6 \Delta \ln(usipi_t) + \lambda ECT_{t-1} + \varepsilon_t
 $$
+
+
+where $Y_t$ denotes Taiwan's nominal GDP.
 
 The error-correction term is defined as:
 
-\[
-\begin{aligned}
-ECT_{t-1}
-&= \ln(ex_{t-1})
--  \phi_0
--  \phi_1 \ln(rexr_{t-1}) \\
-&\quad - \phi_2 \ln(tw\_gdp_{t-1})
--  \phi_3 \ln(ipi_{t-1})
--  \phi_4 \ln(usipi_{t-1})
-\end{aligned}
-\]
+$$
+ECT_{t-1} = \ln(ex_{t-1}) - \phi_0 - \phi_1 \ln(rexr_{t-1}) - \phi_2 \ln(Y_{t-1}) - \phi_3 \ln(ipi_{t-1}) - \phi_4 \ln(usipi_{t-1})
+$$
 
-A statistically significant coefficient satisfying \(-1 < \lambda < 0\) indicates convergence toward the long-run equilibrium.
+A statistically significant coefficient satisfying $-1 < \lambda < 0$ indicates convergence toward the long-run equilibrium.
+
 
 
 ### 4. J-Curve Test
@@ -186,15 +171,15 @@ $$
 
 ### ECM Estimation Results
 
-| Variable | Estimate | Standard error | \(t\)-statistic | \(p\)-value |
+| Variable | Estimate | Standard error | $t$-statistic | $p$-value |
 |:---|---:|---:|---:|---:|
-| \(\Delta \ln(rexr_t)\) | 0.3459 | 0.3883 | 0.891 | 0.3757 |
-| \(\Delta \ln(rexr_{t-1})\) | -0.3468 | 0.3660 | -0.948 | 0.3461 |
-| \(\Delta \ln(rexr_{t-2})\) | -0.6999 | 0.3499 | -2.000 | 0.0488 |
-| \(\Delta \ln(tw\_gdp_t)\) | 0.1247 | 0.2224 | 0.561 | 0.5765 |
-| \(\Delta \ln(ipi_t)\) | 0.9427 | 0.1364 | 6.911 | < 0.001 |
-| \(\Delta \ln(usipi_t)\) | 1.2672 | 1.1683 | 1.085 | 0.2813 |
-| \(ECT_{t-1}\) | -0.0843 | 0.0283 | -2.981 | 0.0038 |
+| $\Delta \ln(rexr_t)$ | 0.3459 | 0.3883 | 0.891 | 0.3757 |
+| $\Delta \ln(rexr_{t-1})$ | -0.3468 | 0.3660 | -0.948 | 0.3461 |
+| $\Delta \ln(rexr_{t-2})$ | -0.6999 | 0.3499 | -2.000 | 0.0488 |
+| $\Delta \ln(tw\_gdp_t)$ | 0.1247 | 0.2224 | 0.561 | 0.5765 |
+| $\Delta \ln(ipi_t)$ | 0.9427 | 0.1364 | 6.911 | < 0.001 |
+| $\Delta \ln(usipi_t)$ | 1.2672 | 1.1683 | 1.085 | 0.2813 |
+| $ECT_{t-1}$ | -0.0843 | 0.0283 | -2.981 | 0.0038 |
 
 ### Error-Correction Mechanism
 
