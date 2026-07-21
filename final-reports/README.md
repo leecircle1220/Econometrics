@@ -112,9 +112,9 @@ Because the variables are a mixture of \(I(0)\) and \(I(1)\), the ARDL bounds-te
 
 The selected specification is:
 
-\[
+$$
 ARDL(1,1,2,1,2)
-\]
+$$
 
 Lag orders are selected by the Akaike Information Criterion (AIC).
 
@@ -130,7 +130,7 @@ The bounds test evaluates whether a long-run cointegration relationship exists b
 
 After confirming cointegration, the ARDL model is reparameterized as an ECM:
 
-\[
+$$
 \begin{aligned}
 \Delta \ln(ex_t)
 &= \alpha
@@ -143,11 +143,11 @@ After confirming cointegration, the ARDL model is reparameterized as an ECM:
 &\quad + \lambda ECT_{t-1}
 + \varepsilon_t
 \end{aligned}
-\]
+$$
 
 The error-correction term is defined as:
 
-
+$$
 \begin{aligned}
 ECT_{t-1}
 &= \ln(ex_{t-1})
@@ -157,17 +157,18 @@ ECT_{t-1}
 -  \phi_3 \ln(ipi_{t-1})
 -  \phi_4 \ln(usipi_{t-1})
 \end{aligned}
-
+$$
 
 A statistically significant coefficient satisfying \(-1 < \lambda < 0\) indicates convergence toward the long-run equilibrium.
+
 
 ### 4. J-Curve Test
 
 A typical J-curve pattern is assessed using the signs of the short-run exchange-rate coefficients:
 
-\[
+$$
 \beta_1 < 0,\qquad \beta_2 > 0,\qquad \beta_3 > 0
-\]
+$$
 
 This pattern would indicate an initial deterioration followed by an improvement in exports after currency depreciation.
 
@@ -177,9 +178,9 @@ The study evaluates whether the estimated long-run export elasticity and short-r
 
 The short-run cumulative exchange-rate effect is:
 
-\[
+$$
 \beta_1 + \beta_2 + \beta_3
-\]
+$$
 
 ## Empirical Results
 
@@ -206,9 +207,9 @@ The short-run cumulative exchange-rate effect is:
 
 The estimated error-correction coefficient is:
 
-\[
+$$
 \hat{\lambda} = -0.0843
-\]
+$$
 
 This implies that approximately \(8.43\%\) of the deviation from long-run equilibrium is corrected each quarter.
 
@@ -234,15 +235,16 @@ One possible explanation is Taiwan's dependence on imported raw materials, inter
 
 The estimated cumulative short-run exchange-rate effect is:
 
-\[
+$$
 0.3459 - 0.3468 - 0.6999 = -0.7009
-\]
+$$
 
 ## Full Report
 
 The full written report, including the literature review, detailed model derivations, tables, and references, is available here:
 
-* [Download the final report (PDF)](main.pdf)
+* [Download the final report (PDF)](final_reports_II/main.pdf)
+
 
 ## Limitations
 
