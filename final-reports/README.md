@@ -147,7 +147,7 @@ $$
 
 The error-correction term is defined as:
 
-$$
+\[
 \begin{aligned}
 ECT_{t-1}
 &= \ln(ex_{t-1})
@@ -157,7 +157,7 @@ ECT_{t-1}
 -  \phi_3 \ln(ipi_{t-1})
 -  \phi_4 \ln(usipi_{t-1})
 \end{aligned}
-$$
+\]
 
 A statistically significant coefficient satisfying \(-1 < \lambda < 0\) indicates convergence toward the long-run equilibrium.
 
