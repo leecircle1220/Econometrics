@@ -1,0 +1,784 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage{threeparttable}
+\usepackage{mathtools,amssymb}
+
+\usepackage{graphicx} % Required for inserting images
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace} % 用於調整行距
+\usepackage{booktabs}
+\usepackage{color}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\definecolor{Beamer_Blue}{RGB}{52,51,171}
+\usepackage{url}
+\usepackage[colorlinks, bookmarks = false]{hyperref}
+\usepackage{threeparttablex}
+\usepackage{subcaption}
+\renewcommand{\figurename}{圖}
+\renewcommand{\tablename}{表}
+
+
+\setlength{\arrayrulewidth}{0.5mm}
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.5}
+
+\usepackage[CJKmath=true,AutoFakeBold=3,AutoFakeSlant=.2]{xeCJK}
+
+\setCJKmainfont{Noto Serif CJK TC}
+\setCJKsansfont{Noto Sans CJK TC}
+\setCJKmonofont{Noto Sans Mono CJK TC}
+
+\newCJKfontfamily\Kai{Noto Serif CJK TC}
+\newCJKfontfamily\Hei{Noto Sans CJK TC}
+\newCJKfontfamily\NewMing{Noto Serif CJK TC}
+
+\XeTeXlinebreaklocale "zh"
+
+\setstretch{1.2}
+
+\begin{document}
+
+\begin{center}
+    \textbf{\Large 113 學年度第一學期計量經濟學（二）期末報告}\\
+    \vspace{1.5cm}
+    \textbf{\Large 匯率政策與出口反應：以 ECM 模型檢視台灣對美出口}\\
+    \vspace{1cm}
+    \Large 李原廷\ 財政四\ 110306055 \\
+    \Large 黃子慈\ 財政四\ 110205094 \\
+\end{center}
+
+\vspace{0.5cm}
+
+\begin{table}[h!]
+    \centering
+    \renewcommand{\arraystretch}{1.5}
+    \setlength{\arrayrulewidth}{0.5mm}
+    \setlength{\tabcolsep}{5pt}
+    \begin{tabular}{|p{4cm}|p{8cm}|}
+        \hline
+        \textbf{This Project} & \textbf{Goals} \\ \hline
+        SDG1 & No Poverty \\ \hline
+        SDG2 & Zero Hunger \\ \hline
+        SDG3 & Good Health and Well-Being \\ \hline
+        SDG4 & Quality Education \\ \hline
+        SDG5 & Gender Equality \\ \hline
+        SDG6 & Clean Water and Sanitation \\ \hline
+        SDG7 & Affordable and Clean Energy \\ \hline
+        \textbf{SDG8} & \textbf{Decent Work and Economic Growth} \\ \hline
+        SDG9 & Industry, Innovation and Infrastructure \\ \hline
+        SDG10 & Reduced Inequalities \\ \hline
+        SDG11 & Sustainable Cities and Communities \\ \hline
+        \textbf{SDG12} & \textbf{Responsible Consumption and Production} \\ \hline
+        SDG13 & Climate Action \\ \hline
+        SDG14 & Life Below Water \\ \hline
+        SDG15 & Life on Land \\ \hline
+        SDG16 & Peace, Justice and Strong Institutions \\ \hline
+        SDG17 & Partnerships for the Goals \\ \hline
+    \end{tabular}
+\end{table}
+\thispagestyle{empty}
+
+\newpage
+
+\setcounter{page}{1}
+\section*{\centering 摘要}
+\vspace{0.5cm}
+\begin{spacing}{1.5}
+本研究旨在探討新台幣兌美元實質匯率變動對台灣出口至美國的動態影響機制。運用2002年第一季至2023年第四季的季度資料，本研究採用自迴歸分佈滯後（ARDL）模型與誤差修正模型（ECM）框架，深入檢驗J曲線效應與Marshall-Lerner條件在台灣的適用性。
+
+實證結果顯示，台灣出口與實質匯率及其他關鍵總體變數之間存在顯著的長期共整合關係，且誤差修正機制有效，當出口偏離長期均衡時，每季將以約8.43\%的速度進行修正。在核心議題上，本研究發現台灣的出口彈性在長期與短期累積層面上均滿足Marshall-Lerner條件，支持匯率貶值對改善出口總值的長期結構性效果。然而，短期動態分析並未發現典型的J曲線效應證據；相反地，匯率貶值的衝擊在滯後期呈現負向反應。
+
+此一非典型動態路徑可能歸因於台灣出口產業高度依賴進口中間財的結構特性，導致匯率貶值所引發的進口成本上升壓力，在短期內抵銷甚至超越了價格競爭力優勢。本研究結論揭示了匯率政策在台灣的雙重性：儘管其具備長期有效性，但短期傳導路徑因供應鏈成本效應而更為複雜，這對理解小型開放經濟體在全球價值鏈中的匯率傳導機制具有重要的政策意涵。
+\textbf{關鍵字：J曲線效應、Marshall-Lerner條件、誤差修正模型(ECM)、自迴歸分佈滯後(ARDL)、匯率傳遞機制、共整合}
+\end{spacing}
+
+
+\newpage
+
+\section{前言}
+\subsection{研究背景與動機}
+
+\begin{spacing}{1.5}
+
+在全球化浪潮下，匯率變動對國際貿易流量的影響機制已成為國際經濟學研究的核心議題。匯率作為國際經濟整合的關鍵價格信號，不僅體現各國貨幣的相對購買力，更是決定一國商品國際競爭力的重要因子。對於高度整合於全球價值鏈的小型開放經濟體而言，匯率波動對貿易表現所產生的影響效應更為顯著，進而對總體經濟成長、勞動市場均衡及國際收支結構產生系統性影響。
+
+台灣經濟體系具備典型小型開放經濟體特徵，其貿易依存度長期維持在60\%以上，遠超越多數先進經濟體水準。在此高度外向型經濟結構下，新台幣匯率變動對出口部門的影響效應具有特殊的政策意涵。自1990年代台灣採行管理浮動匯率制度以來，新台幣兌美元匯率歷經多次結構性調整，包括1997年亞洲金融危機、2008年全球金融海嘯，以及近期中美貿易摩擦與COVID-19疫情等外部衝擊。這些匯率變動事件為驗證匯率傳統理論提供了豐富的研究資料，同時凸顯深化匯率傳導機制研究的理論與政策必要性。
+
+從理論層面分析，匯率變動對貿易平衡的影響主要透過價格彈性機制與數量調整機制運作。傳統彈性分析法（elasticity approach）認為，本國貨幣貶值將降低出口商品的外幣計價，提升價格競爭優勢，進而刺激出口數量增長。然而，Magee（1973）所提出的J曲線假說展現出匯率傳導的時間因素：由於貿易合約的預先承諾性質與數量調整的時間遞延效應，貨幣貶值在短期內可能因價格效應超越數量效應而暫時性地惡化貿易平衡，僅於長期數量調整機制充分運作後，貿易平衡方能實現預期改善，呈現出「J」型的動態調整路徑。
+
+值得注意的是，美國財政部於2025年6月5日發布的最新匯率政策報告再次將此議題推向國際關注焦點。儘管報告未將任何主要貿易夥伴認定為匯率操縱國，但台灣、中國及日本等經濟體仍被納入觀察名單。對此，台灣中央銀行隨即發布政策說明，重申台美貿易順差擴大的主要成因為全球供應鏈的結構與美國對台灣資通訊產品需求增長等結構性因素，而非匯率政策導向。此一政策辯論為傳統匯率理論框架增添了重要的實證分析，突顯在分析貿易平衡決定因素時，除匯率的相對價格效應外，全球產業的分工與特定商品需求彈性等結構性變數可能具有更為關鍵的解釋力。這一發展進一步印證了匯率傳導機制在理論建構與實證應用層面的複雜性，以及深化相關研究的學術價值與政策意義。
+
+為了聚焦分析目標，我們主要探討台幣兌美元實質匯率變動對台灣出口表現的影響機制，並檢驗J曲線效應在台灣是否存在。
+\end{spacing}
+
+\subsection{文獻回顧}
+\subsubsection{理論回顧}
+\begin{spacing}{1.5}
+
+匯率變動對國際貿易影響的理論基礎可追溯至傳統的國際貿易理論。古典的彈性理論 (elasticity approach) 認為，匯率變動主要透過相對價格效應影響貿易流量，即本幣貶值降低出口商品的外幣價格，提高國際競爭力，進而促進出口增加。然而，這一理論假設忽略了現實中貿易調整的複雜性和時間落遲效應。
+
+Marshall (1923) 和Lerner (1944) 進一步發展了彈性理論，提出的Marshall-Lerner條件，該條件指出，當出口需求彈性和進口需求彈性的絕對值之和大於1時，本幣貶值才能改善貿易平衡。這一條件的成立與否直接決定了匯率政策的有效性，因此成為後續實證研究的重要檢驗標的 (Krugman \& Obstfeld, 2018)。
+
+傳統彈性理論的靜態分析框架無法解釋現實中觀察到的貿易調整時間落遲現象。Magee (1973) 首次提出J曲線假說，讓匯率變動如何影響出口中的動態效應提供了理論基礎。該理論認為，貨幣貶值對貿易平衡的影響可分為三個階段：首先是價格效應階段，由於既有貿易合約的約束和價格黏性，貶值立即提高進口成本而出口數量尚未增加，導致貿易平衡暫時惡化；其次是數量調整階段，隨著新合約簽訂和市場反應，出口數量開始增加；最後是完全調整階段，數量效應充分發揮，貿易平衡獲得改善，整個調整過程形成類似「J」型的時間路徑。
+
+Bahmani-Oskooee and Ratha (2004) 對J曲線效應的理論發展和實證研究進行了系統性回顧，指出該效應的存在性和持續時間受到多種因素影響，包括貿易夥伴的經濟結構、產業特徵、合約期限以及市場競爭程度等。該研究強調，J曲線效應的檢驗需要適當的動態計量模型，以捕捉短期和長期調整的差異。
+
+\end{spacing}
+\subsubsection{實證回顧}
+\begin{spacing}{1.5}
+
+J曲線效應和匯率貿易關係的實證研究經歷了方法論的重要演進。早期研究主要採用普通最小平方法 (OLS) 和簡單的分布落遲模型，但這些方法未能充分處理時間序列資料的非穩定性問題，可能導致虛假迴歸和參數估計的不一致性 (Granger \& Newbold, 1974)。
+
+共整合理論的發展為長期均衡關係的研究提供了重要工具。Engle and Granger (1987) 提出的兩步驟共整合檢定和Johansen (1988) 的最大概似法為研究匯率與貿易的長期關係奠定了方法論基礎。然而，這些方法要求所有變數具有相同的整合階次，限制了其應用範圍。
+
+Pesaran, Shin, and Smith (2001) 提出的自迴歸分布落遲 (ARDL) 模型和邊界檢定法解決了混合階次整合的問題，無論變數為I(0)或I(1)，皆可進行共整合檢定。該方法特別適用於小樣本研究，且能同時估計短期動態和長期均衡關係，因此廣泛應用於匯率貿易關係的實證研究中。
+
+針對J曲線效應的國際實證研究呈現出豐富但不一致的結果。Bahmani-Oskooee and Ratha (2004) 的綜述性研究顯示，約60\%的研究支持J曲線效應的存在，但調整的時間長度和幅度在不同國家間存在顯著差異，反映了各國經濟結構和貿易特徵的異質性。
+
+亞洲國家作為全球貿易的重要參與者，其匯率貿易關係受到廣泛關注。Hsing (2005) 針對日本、韓國和台灣的比較研究是該領域的重要貢獻，該研究使用1976-2003年的季度資料，採用Engle-Granger共整合方法，發現三國皆存在J曲線效應，但調整模式存在差異：日本的調整期間最長（約12季），韓國次之（約8季），台灣最短（約6季）。該研究將調整速度的差異歸因於各國的出口商品結構和市場多元化程度。
+
+更近期的研究採用了更先進的計量方法。Ahmed et al. (2022) 使用ARDL模型重新檢驗了東亞國家的J曲線效應，發現在控制了全球需求和商品價格後，J曲線效應變得更為顯著，且調整時間普遍縮短，反映了區域價值鏈整合對貿易動態的影響。
+
+針對台灣的實證研究相對有限，且多數集中在較早期的資料。除了前述Hsing (2005) 的研究外，Lin and Wang (2009) 使用1981-2005年的月度資料，採用向量誤差修正模型 (VECM) 分析台幣匯率對雙邊貿易的影響，發現與主要貿易夥伴（美國、日本、德國）的貿易確實存在J曲線效應，但效應的顯著性和持續時間因貿易夥伴而異。
+
+\end{spacing}
+
+
+%% \hspace{1pt}\hyperref[eq:1]{式 (\ref{eq:1})}
+%% \hspace{1pt}\hyperref[table:1]{表 \ref{table:1}.}
+
+\section{計量模型}
+\begin{spacing}{1.5}
+我們採用自回歸分佈滯後模型（Autoregressive Distributed Lag Model, ARDL）方法建構誤差修正模型以分析台灣出口與實質有效匯率之間的動態關係。ARDL方法的優勢在於能夠在單一階段同時估計短期動態效應與長期均衡關係，且不需要預先確定變數的整合階次，適用於混合I(0)與I(1)變數的分析。透過邊界檢定（bounds test）確認變數間存在共整合關係後，我們將ARDL模型重新參數化為誤差修正模型形式。
+
+考量匯率政策對出口影響的動態特性，特別是J曲線效應的理論預期，我們基於ARDL估計結果建構以下誤差修正模型（Error Correction Model, ECM）：
+
+\end{spacing}
+\vspace{-1cm}
+\begin{align}
+\Delta \ln(ex_t) = &\ \alpha + \beta_1 \Delta \ln(rexr_t) + \beta_2 \Delta \ln(rexr_{t-1}) + \beta_3 \Delta \ln(rexr_{t-2}) \nonumber \\
+&+ \beta_4 \Delta \ln(tw\_gdp_t) + \beta_5 \Delta \ln(ipi_t) + \beta_6 \Delta \ln(usipi_t) \nonumber \\
+&+ \lambda\cdot ECT{t-1} + \varepsilon_t \label{eq:ecm}
+\end{align}
+
+\begin{spacing}{1.5}
+
+在\hspace{1pt}\hyperref[eq:ecm]{式 (\ref{eq:ecm})}中，$\Delta \ln(ex_t)$ 為台灣出口增長率，$\Delta \ln(rexr_t)$ 為台幣兌美元實質匯率變動率（當期），$\Delta \ln(rexr_{t-1})$ 為台幣兌美元實質匯率變動率（落遲1期），$\Delta \ln(rexr_{t-2})$ 為台幣兌美元實質匯率變動率（落遲2期），$\Delta \ln(tw\_gdp_t)$ 為台灣GDP增長率，$\Delta \ln(ipi_t)$ 為台灣工業生產指數增長率，$\Delta \ln(usipi_t)$ 為美國工業生產指數增長率，$ECT_{t-1}$ 為誤差修正項（落遲1期），$\varepsilon_t$ 為隨機誤差項。在後續模型的假設與驗證都會依據\hspace{1pt}\hyperref[eq:ecm]{式 (\ref{eq:ecm})}進行變化。
+\end{spacing}
+
+誤差修正項由ARDL模型的長期係數計算得出，反映前期偏離長期均衡關係的程度：
+\begin{equation}
+ECT_{t-1} = \ln(ex_{t-1}) - \phi_0 - \phi_1 \ln(rexr_{t-1}) - \phi_2 \ln(tw\_gdp_{t-1}) - \phi_3 \ln(ipi_{t-1}) - \phi_4 \ln(usipi_{t-1}) \label{eq:ect}
+\end{equation}
+
+\begin{spacing}{1.5}
+其中$\phi_i$為ARDL模型轉換後的長期係數，計算公式為$\phi_i = \frac{\sum_{j=0}^{q_i} \hat{\delta}_{ij}}{1-\sum_{k=1}^{p} \hat{\theta}_k}$，$\hat{\delta}_{ij}$和$\hat{\theta}_k$分別為ARDL模型中解釋變數和被解釋變數滯後項的估計係數。
+\end{spacing}
+
+\subsection{J曲線效應檢驗方法}
+J曲線效應描述匯率貶值對貿易收支影響的動態過程，我們設計不同檢驗方法驗證此效應是否存在：
+
+\subsubsection{基本符號檢驗}
+
+J曲線效應的核心檢驗為實質匯率變動對出口的動態影響模式。基於經濟理論，標準J曲線應滿足以下條件：
+
+\vspace{-1cm}
+
+\begin{align}
+H_0^{(J1)}: &\beta_1 < 0 \quad \text{（短期惡化效應）} \label{eq:j1} \\
+H_0^{(J2)}: &\beta_2 > 0 \quad \text{（中期改善效應）} \label{eq:j2} \\
+H_0^{(J3)}: &\beta_3 > 0 \quad \text{（長期促進效應）} \label{eq:j3}
+\end{align}
+
+經濟邏輯為：
+\begin{itemize}
+\item $\beta_1 < 0$：匯率貶值當期，價格上升效應使出口競爭力暫時下降
+\item $\beta_2 > 0$：落遲1期，數量效應開始發揮，出口開始改善
+\item $\beta_3 > 0$：落遲2期，數量效應完全發揮，出口持續改善
+\end{itemize}
+
+
+\subsection{調整速度與長期均衡檢驗}
+
+\subsubsection{誤差修正機制檢驗}
+\begin{spacing}{1.5}
+誤差修正機制的檢驗係基於Engle-Granger表示定理，該定理指出若變數間存在共整合關係，則必然存在對應的誤差修正表達式。調整速度係數$\lambda$不僅反映偏離均衡後的修正力度，更體現市場效率與套利機制的完善程度。在實證分析中，我們需要確認誤差修正項係數是否符合理論預期，亦即滿足穩定收斂條件。
+\end{spacing}
+
+調整速度係數$\lambda$的檢驗條件為：
+\begin{equation}
+H_0^{(ECM)}: -1 < \lambda < 0 \quad \text{（有效調整機制）} \label{eq:ecm_test}
+\end{equation}
+\begin{spacing}{1.5}
+統計顯著性檢驗採用$t$統計量檢驗調整速度係數是否顯著異於零。檢驗統計量定義為$t_\lambda = \hat{\lambda}/SE(\hat{\lambda})$，其服從自由度為$n-k$的$t$分布。在5\%顯著水準下，若$|t_\lambda| > t_{0.025, n-k}$，則拒絕虛無假設$H_0: \lambda = 0$，表明存在有效的誤差修正機制。此外，穩定性條件檢驗採用Wald檢驗驗證$\lambda > -1$的約束條件，檢驗統計量$W = (\hat{\lambda} + 1)^2/Var(\hat{\lambda})$服從自由度為1的卡方分布。調整方向檢驗則透過單尾檢驗確認$\lambda < 0$，確保誤差修正機制具有向均衡收斂的特性。
+\end{spacing}
+\vspace{-0.5cm}
+\subsubsection{調整速度指標}
+\begin{spacing}{1.5}
+基於調整速度係數$\lambda$的估計值，我們可以計算具有明確經濟意義的調整速度指標。每期調整比例定義為$|\lambda| \times 100\%$，反映單期內修正偏離程度的百分比。半衰期計算公式為$\ln(0.5)/\ln(1+\lambda)$，表示偏離程度減半所需的時間。完全調整時間則近似為$1/|\lambda|$，提供理論上完全收斂至均衡狀態的時間估計。
+\end{spacing}
+\vspace{-0.5cm}
+\begin{align}
+\text{每期調整比例} &= |\lambda| \times 100\% \\
+\text{半衰期} &= \frac{\ln(0.5)}{\ln(1+\lambda)} \\
+\text{完全調整時間} &= \frac{1}{|\lambda|} \label{eq:adjustment_metrics}
+\end{align}
+\begin{spacing}{1.5}
+每期調整比例的解釋需要配合一些經驗法測進行基準比較。一般而言，調整比例低於10\%表示調整機制較為緩慢，可能反映市場存在顯著摩擦或制度性障礙。調整比例介於10\%至30\%之間通常被視為正常範圍，符合一般開放經濟體的特徵。若調整比例高於30\%，則顯示市場具有較高效率，套利機制運作良好。
+\end{spacing}
+
+\vspace{-0.5cm}
+
+\subsection{Marshall-Lerner條件檢驗}
+\begin{spacing}{1.5}
+Marshall-Lerner條件闡明匯率變動對貿易收支影響的關鍵機制。在開放經濟體系中，匯率貶值對出口競爭力的提升效果取決於出口需求的價格彈性程度。當出口需求對價格變動的反應足夠敏感時，匯率貶值所帶來的價格優勢能夠有效轉化為出口數量的增加，進而改善貿易收支。
+
+從理論觀點而言，Marshall-Lerner條件的核心在於價格效應與數量效應的相對重要性。匯率貶值雖然提高了以外幣計價的出口商品競爭力，但同時也可能因為出口商品以本幣計價的收益提升而產生價格上漲壓力。因此，最終的淨效應取決於需求彈性的大小，為Marshall-Lerner條件檢驗的理論依據。
+\end{spacing}
+\vspace{-0.5cm}
+\subsubsection{出口彈性檢驗}
+\begin{spacing}{1.5}
+長期出口彈性的估計係基於共整合關係中實質匯率係數$\gamma_1$的檢驗。此彈性反映在排除短期擾動後，匯率變動對出口的長期均衡影響。檢驗假設設定為：
+\end{spacing}
+
+\begin{equation}
+H_0^{(ML1)}: |\gamma_1| \geq 1 \quad \text{（出口彈性條件）} \label{eq:ml_export}
+\end{equation}
+
+\begin{spacing}{1.5}
+長期彈性的經濟意義在於衡量匯率政策的結構性效果。當$|\gamma_1| \geq 1$時，表示匯率變動1\%將導致出口變動超過1\%，意味著數量效應足以抵銷價格效應，匯率政策能夠有效改善出口表現。相反地，若$|\gamma_1| < 1$，則暗示出口需求對價格變動的反應不足，匯率貶值的政策效果有限。
+統計檢驗採用單側檢驗程序，檢驗統計量為$t_{ML1} = (\hat{\gamma_1} - 1)/SE(\hat{\gamma_1})$。在原假設$|\gamma_1| \geq 1$下，若$t_{ML1} < -t_{\alpha, n-k}$，則拒絕原假設，表明長期出口彈性不滿足Marshall-Lerner條件。
+\end{spacing}
+\vspace{-0.5cm}
+\subsubsection{動態Marshall-Lerner檢驗}
+\begin{spacing}{1.5}
+短期動態調整過程中的累積彈性檢驗提供了Marshall-Lerner條件在時間維度上的擴展分析。此檢驗考量匯率變動的動態傳遞機制，特別是J曲線效應可能造成的短期與長期效果差異。
+\end{spacing}
+
+\begin{equation}
+H_0^{(ML2)}: |\beta_1 + \beta_2 + \beta_3| \geq 1 \quad \text{（短期累積彈性條件）} \label{eq:ml_dynamic}
+\end{equation}
+\begin{spacing}{1.5}
+短期累積彈性$\beta_1 + \beta_2 + \beta_3$反映了匯率衝擊在三期內的總體影響，其經濟意義在於評估政策效果的即時性與持續性。當累積彈性滿足Marshall-Lerner條件時，表明儘管可能存在短期調整成本，匯率政策仍能在合理時間內產生預期效果。
+
+動態檢驗的統計程序需要考慮參數間的共變異數結構。累積效應的方差計算為$Var(\beta_1 + \beta_2 + \beta_3) = Var(\beta_1) + Var(\beta_2) + Var(\beta_3) + 2Cov(\beta_1, \beta_2) + 2Cov(\beta_1, \beta_3) + 2Cov(\beta_2, \beta_3)$。檢驗統計量定義為$t_{ML2} = (|\hat{\beta_1} + \hat{\beta_2} + \hat{\beta_3}| - 1)/SE(\hat{\beta_1} + \hat{\beta_2} + \hat{\beta_3})$。
+
+累積彈性的時間分布模式提供了更深入的政策傳導機制。若$\beta_1$、$\beta_2$、$\beta_3$呈現遞增趨勢，表明匯率效果隨時間逐步放大，符合標準的政策傳導理論。若呈現先降後升的模式，則可能暗示存在J曲線效應。累積彈性的穩定性亦是重要考量，波動過大的彈性可能反映市場預期的不穩定或政策可信度問題。
+\end{spacing}
+
+
+\section{資料來源、處理與分析}
+
+我們所使用的變數定義如\hspace{1pt}\hyperref[tab:variables]{表 \ref{tab:variables}}所示。
+
+\begin{ThreePartTable}
+\begin{longtable}{p{2.5cm}p{2cm}p{6cm}p{3cm}}
+\caption{變數定義與說明} \label{tab:variables} \\
+\toprule
+\textbf{種類} & \textbf{變數} & \textbf{變數解釋} & \textbf{單位} \\
+\midrule
+\endfirsthead
+
+\multicolumn{4}{c}%
+{\tablename\ \thetable\ -- 續前頁} \\
+\toprule
+\textbf{種類} & \textbf{變數} & \textbf{變數解釋} & \textbf{單位} \\
+\midrule
+\endhead
+
+\midrule
+\multicolumn{4}{r}{續下頁} \\
+\endfoot
+
+\bottomrule
+\endlastfoot
+
+\multirow{1}{*}{\textbf{被解釋變數}} &
+lex & 對數後台灣對美國出口總值 & 每千美元 \\
+\midrule
+
+\multirow{5}{*}{\textbf{解釋變數}} &
+lipi & 對數後台灣工業生產指數 & 指數 \\
+& lgdp & 對數後台灣名目國內生產毛額 & 每新台幣百萬元 \\
+& lusgdp & 對數後美國名目國內生產毛額 & 每十億美元 \\
+& lusipi & 對數後美國工業生產指數 & 指數 \\
+& lrexr & 對數後台幣實質匯率（兌美元） & 元/美元 \\
+
+
+\end{longtable}
+\vspace{-0.3cm}
+\begin{tablenotes}
+\footnotesize
+\item 註：所有變數均經自然對數轉換處理。
+\item 資料期間：2002年第1季至2023年第4季。
+\item 資料來源：財政部關務署、經濟部統計處、主計總處、美國商務部BEA、美國聯邦準備理事會、中央銀行。
+\end{tablenotes}
+\end{ThreePartTable}
+
+\begin{spacing}{1.5}
+我們蒐集了台灣、美國兩個經濟體的相關經濟指標資料。台灣對美國出口資料取自財政部關務署統計資料，包含台灣對美國的商品出口金額，以千美元計價；台灣工業生產指數則取自經濟部統計處工業生產統計，反映台灣製造業生產活動的變化，以基期為100的指數表示；台灣名目國內生產毛額資料來源為行政院主計總處國民所得統計，以當期價格計算的國內生產毛額，單位為新台幣百萬元。
+
+在美國經濟指標方面，美國名目國內生產毛額取自美國商務部經濟分析局（Bureau of Economic Analysis, BEA），以當期價格計算，單位為十億美元；美國工業生產指數則取自美國聯邦準備理事會（Federal Reserve Board），反映美國製造業、礦業及公用事業的生產狀況，以基期為100的指數表示。
+此外，匯率資料均取自中央銀行統計資料，新台幣兌美元的平均匯率（單位為元/美元）。
+\end{spacing}
+
+\vspace{-0.5cm}
+
+\subsection{資料處理}
+\begin{spacing}{1.5}
+我們對模型中所使用的各項變數進行單根檢定。採用Augmented Dickey-Fuller (ADF) 檢定方法，針對每個變數在三種不同的模型設定下進行測試，包括無截距項、含截距項以及含截距項與時間趨勢項的模型規格。\hspace{1pt}\hyperref[tab:adf_level_test]{表 \ref{tab:adf_level_test}} 呈現了各變數的ADF檢定統計量、相對應的5\%顯著水準臨界值、p值，以及基於這些統計結果所得出的平穩性判定結論。
+
+檢定結果顯示，在所有測試變數中，僅有lipi變數表現出平穩的時間序列特性。具體而言，在包含時間趨勢的模型規格下，lipi的ADF統計量為-6.073，明顯小於5\%顯著水準的臨界值-3.45，同時其對應的p值為0.0100，達到統計顯著性的標準。基於這些統計證據，我們可以明確拒絕該變數存在單根的虛無假設，因此推論lipi為一階積分程度為零的平穩變數，即I(0)過程。
+
+相對而言，其餘所有變數包括lex、ltw\_gdp、lrexr以及lusipi，在三種不同模型設定下的ADF檢定結果均呈現一致的非平穩特徵。這些變數的ADF統計量均未能達到5\%顯著水準的要求，其對應的p值也都大於0.05的臨界標準，顯示我們缺乏足夠的統計證據來拒絕單根的虛無假設。因此，這些變數在水準值階段均被判定為非平穩的時間序列，屬於一階積分程度為一的I(1)過程。
+
+這種混合積分階數的結果對後續的計量分析要特別注意。由於大部分變數為I(1)而僅有一個變數為I(0)，這種情況需要考慮變數間可能存在的共整合關係，以及如何適當地處理不同積分階數變數之間的長期均衡與短期動態關係。
+\end{spacing}
+\begin{table}[h]
+    \centering
+    \scalebox{0.8}{
+    \begin{threeparttable}
+        \caption{ADF 單根檢定結果 (水準項)}
+        \label{tab:adf_level_test}
+        \begin{tabular}{lcccccccc}
+            \toprule
+            變數 & 無截矩 ADF & 5\%臨界值 & 有截矩 ADF & 5\%臨界值 & 有趨勢 ADF & 5\%臨界值 & P值 & 定態結果 I(0) \\
+            \midrule
+            ltw\_gdp & 2.8607 & -1.95 & 0.4367  & -2.89 & -2.7500            & -3.45 & 0.2671 & No \\
+            lrexr    & 0.8314 & -1.95 & -1.0815 & -2.89 & -2.1728            & -3.45 & 0.5914 & No \\
+            lex      & 1.3745 & -1.95 & -0.0451 & -2.89 & -1.8399            & -3.45 & 0.6422 & No \\
+            lipi     & 1.4155 & -1.95 & -1.3228 & -2.89 & -6.0726\tnote{***} & -3.45 & 0.0100 & Yes \\
+            lusipi   & 4.2798 & -1.95 & 0.8695  & -2.89 & -0.8507            & -3.45 & 0.9126 & No \\
+            \bottomrule
+        \end{tabular}
+        \begin{tablenotes}
+            \footnotesize
+            \item 註：\tnote{***} 表示在 1\% 顯著水準下拒絕單根存在的虛無假設。
+            \item P值為 ADF 檢定中，包含趨勢與截距項模型下的 p-value。
+            \item 定態結果「Yes」表示在 5\% 顯著水準下，該序列為定態 I(0)。
+        \end{tablenotes}
+    \end{threeparttable}
+    }
+\end{table}
+\begin{spacing}{1.5}
+\hspace{1pt}\hyperref[tab:adf_diff_test]{表 \ref{tab:adf_diff_test}} 為進一步確認前述被判定為非平穩變數的積分特性，我們對變數lex、ltw\_gdp、lrexr與lusipi進行一階差分處理，並對差分後的序列dlex、dltw\_gdp、dlrexr與dlusipi重新執行ADF單根檢定。檢定模型採用含截距項模型假設，並在5\%顯著水準下進行統計假設檢定，以驗證這些變數是否確實為一階積分序列。
+
+一階差分後的ADF檢定結果提供了明確的統計證據支持原假設。四個差分變數的ADF檢定統計量分別為：dlex的-5.6362、dltw\_gdp的-4.4491、dlrexr的-6.4491以及dlusipi的-4.8752。這些統計量均明顯小於5\%顯著水準下的臨界值-2.89，顯示在統計上具有強烈的顯著性。基於這些檢定結果，我們可以明確拒絕一階差分序列存在單根的虛無假設。
+
+這項檢定結果具有重要的統計意涵：由於一階差分後的序列均呈現平穩特性，可以確認原變數lex、ltw\_gdp、dlrexr與lusipi確實為一階積分I(1)過程。換言之，這些變數在水準階段雖然具有單根特性而呈現非平穩狀態，但經過一次差分處理後即可轉換為平穩的時間序列。
+\end{spacing}
+
+\begin{table}[h]
+    \centering
+    \begin{threeparttable}
+        \caption{屬 I(1)變數差分後 ADF 檢定結果}
+        \label{tab:adf_diff_test}
+        \begin{tabular}{lccc}
+            \toprule
+            變數 & ADF 統計量 & 5\%臨界值 & 定階結果 I(0) \\
+            \midrule
+            dlex     & -5.6362\tnote{***} & -2.89 & Yes \\
+            dltw\_gdp & -4.4491\tnote{***} & -2.89 & Yes \\
+            dlrexr   & -6.4491\tnote{***} & -2.89 & Yes \\
+            dlusipi  & -4.8752\tnote{***} & -2.89 & Yes \\
+            \bottomrule
+        \end{tabular}
+
+        \begin{tablenotes}
+            \footnotesize
+            \item 註：\tnote{***} 表示在 1\% 顯著水準下拒絕單根存在的虛無假設。
+            \item ADF檢定模型包含截距項，其 1\% 臨界值約為 -3.46，5\% 臨界值為 -2.89。
+            \item 定階結果「Yes」表示差分後的序列均為定態 I(0)。
+        \end{tablenotes}
+    \end{threeparttable}
+\end{table}
+
+
+\section{實證結果}
+\begin{spacing}{1.5}
+在進行\hspace{1pt}\hyperref[eq:ecm]{式 (\ref{eq:ecm})}的迴歸模型驗證前，我們要先確定ARDL邊界檢定，確定變數間存在共整合關係，我們驗證過程如下：
+
+在設定最大滯後階數為2的約束條件下，透過比較不同滯後階數組合的Akaike資訊準則（AIC）值，最終選定ARDL(1,1,2,1,2)作為最適模型。該模型的AIC值為-220.9173，在所有候選模型中表現最佳。
+
+選定的ARDL(1,1,2,1,2)模型估計結果如\hspace{1pt}\hyperref[tab:ardl_results]{表 \ref{tab:ardl_results}} 所示。模型的整體配適度表現優異，調整後決定係數（Adjusted R-squared）達到0.9713，顯示模型能夠解釋約97.13\%的出口變動。F統計量為275，對應的p值小於2.2e-16，在1\%顯著水準下強烈拒絕所有解釋變數係數同時為零的虛無假設。
+\end{spacing}
+\begin{table}[h!]
+  \centering
+  \begin{threeparttable}
+    \caption{ARDL(1,1,2,1,2)模型估計結果}
+    \label{tab:ardl_results}
+    \begin{tabular}{lcccc}
+      \toprule
+      變數 & 估計係數 & 標準誤 & t統計量 & p值 \\
+      \midrule
+      截距項      & 0.64893        & 2.21352 & 0.293   & 0.77017 \\
+      lex\_L1       & 0.93076\tnote{***} & 0.05551 & 16.768  & <2e-16 \\
+      lrexr\_L0     & 0.01339        & 0.42428 & 0.032   & 0.97490 \\
+      lrexr\_L1     & 0.20268        & 0.39285 & 0.516   & 0.60737 \\
+      ltw\_gdp\_L0   & 0.29279        & 0.29719 & 0.985   & 0.32759 \\
+      ltw\_gdp\_L1   & -0.86845\tnote{***} & 0.32880 & -2.641  & 0.00997 \\
+      ltw\_gdp\_L2   & 0.48722\tnote{**}  & 0.22277 & 2.187   & 0.03173 \\
+      lipi\_L0       & 0.80743\tnote{***} & 0.18495 & 4.366   & 3.85e-05 \\
+      lipi\_L1       & -0.64154\tnote{***} & 0.18897 & -3.395  & 0.00108 \\
+      lusipi\_L0    & 0.84637        & 1.46098 & 0.579   & 0.56404 \\
+      lusipi\_L1    & 1.53865        & 2.20412 & 0.698   & 0.48720 \\
+      lusipi\_L2    & -2.35558\tnote{*}  & 1.38194 & -1.705  & 0.09226 \\
+      \bottomrule
+    \end{tabular}
+    \begin{tablenotes}
+      \small{ % 註解字體縮小
+      \item 註： \tnote{***}、\tnote{**}、\tnote{*} 分別表示在1\%、5\%及10\%顯著水準下統計顯著。
+      \item 殘差標準誤：0.06593，自由度：78
+      \item 複決定係數：0.9749，調整後決定係數：0.9713
+      \item F統計量：275 (11, 78)，p值：< 2.2e-16}
+    \end{tablenotes}
+  \end{threeparttable}
+\end{table}
+邊界檢定的虛無假設為：
+\begin{equation}
+H_0: \delta = \theta_1 = \theta_2 = \theta_3 = \theta_4 = 0 \quad \text{（無共整合關係）}
+\end{equation}
+
+\vspace{-0.3cm}
+
+對立假設為：
+\begin{equation}
+H_1: \delta \neq 0 \text{ 或 } \theta_i \neq 0, \quad i = 1,2,3,4 \quad \text{（存在共整合關係）}
+\end{equation}
+
+\begin{spacing}{1.5}
+從ARDL(1,1,2,1,2)模型，我們識別出以下5個水準項變數：lex\_L1為對數出口滯後一期項（調整係數），lrexr\_L0為對數實質匯率當期項，ltw\_gdp\_L0為對數台灣GDP當期項，lipi\_L0為對數工業生產指數當期項，以及lusipi\_L0為對數美國工業生產指數當期項。這些變數構成了邊界檢定中檢驗共整合關係存在性的重要因素。
+
+構建5×12的限制矩陣R，用以檢驗所有水準項係數同時為零的聯合假設。該限制矩陣的行數對應於水準項變數的個數，列數對應於ARDL模型中的總參數個數。
+
+計算得到的F統計量為81.3978，該值需與Pesaran et al. (2001) Case III情境下的臨界值進行比較。Case III假設模型包含非限制性截距項但無確定性趨勢項，符合我們的模型設定。
+\end{spacing}
+\vspace{-0.5cm}
+\begin{table}[h!]
+  \centering
+  \begin{threeparttable}
+    \caption{ARDL邊界檢定臨界值 (k=4, Case III)}
+    \label{tab:critical_values}
+    \begin{tabular}{ccc}
+      \toprule
+      顯著水準 & I(0)下界 & I(1)上界 \\
+      \midrule
+      10\%   & 2.45     & 3.52     \\
+      5\%    & 2.86     & 4.01     \\
+      2.5\%  & 3.25     & 4.49     \\
+      1\%    & 3.74     & 5.06     \\
+      \bottomrule
+    \end{tabular}
+    \begin{tablenotes}
+      \footnotesize
+      \item 資料來源：Pesaran et al. (2001), Table CI.iii
+      \item 註：k表示解釋變數個數（此處k=4）
+    \end{tablenotes}
+  \end{threeparttable}
+\end{table}
+\vspace{-0.5cm}
+% --- 第二個表格：檢定結果 ---
+\begin{table}[h!]
+  \centering
+  \caption{ARDL邊界檢定結果}
+  \label{tab:bounds_test}
+  \begin{tabular}{ll}
+    \toprule
+    統計量 & 數值 \\
+    \midrule
+    F統計量 & 81.3978 \\
+    限制個數 & 5 \\
+    自由度 & (5, 78) \\
+    \midrule
+    \multicolumn{2}{c}{\textbf{檢定結論}} \\
+    \midrule
+    F統計量 vs 1\%上界 & 81.3978 > 5.06 \\
+    統計結論 & 強烈拒絕$H_0$ (不存在共整合關係) \\
+    經濟結論 & 變數間存在長期均衡的共整合關係 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+\begin{spacing}{1.5}
+F統計量81.3978遠超過1\%顯著水準的上界臨界值5.06，提供了極強的統計證據拒絕無共整合的虛無假設。此結果表明在1\%顯著水準下，可以確信台灣出口與其解釋變數之間存在長期均衡關係。
+
+由前述ARDL邊界檢定確認的共整合關係，我們可以建立ECM模型如同\hspace{1pt}\hyperref[eq:ecm]{式 (\ref{eq:ecm})}，並且89個有效觀察值進行估計，估計結果如\hspace{1pt}\hyperref[tab:ecm_results]{表 \ref{tab:ecm_results}} 所示。
+\end{spacing}
+
+\begin{table}[h!]
+  \centering
+  \begin{threeparttable}
+    \caption{ECM模型估計結果}
+    \label{tab:ecm_results}
+    \begin{tabular}{lcccc}
+      \toprule
+      變數 & 估計係數 & 標準誤 & t統計量 & p值 \\
+      \midrule
+      截距項               & 0.01099         & 0.01121 & 0.980   & 0.32977 \\
+      $\Delta \ln rexr_t$    & 0.34586         & 0.38828 & 0.891   & 0.37571 \\
+      $\Delta \ln rexr_{t-1}$  & -0.34679        & 0.36596 & -0.948  & 0.34614 \\
+      $\Delta \ln rexr_{t-2}$  & -0.69992\tnote{**}  & 0.34987 & -2.000  & 0.04880 \\
+      $\Delta \ln tw\_gdp_t$ & 0.12474         & 0.22242 & 0.561   & 0.57646 \\
+      $\Delta \ln ipi_t$     & 0.94270\tnote{***}  & 0.13641 & 6.911   & 1e-09 \\
+      $\Delta \ln usipi_t$   & 1.26716         & 1.16831 & 1.085   & 0.28132 \\
+      $ECT_{t-1}$            & -0.08428\tnote{***} & 0.02827 & -2.981  & 0.00379 \\
+      \bottomrule
+    \end{tabular}
+
+    \begin{tablenotes}
+      \footnotesize % 註解字體縮小
+      \item 註：\tnote{***}、\tnote{**}、\tnote{*}表示在1\%、5\%、10\%顯著水準下統計顯著。
+      \item 殘差標準誤：0.0658，自由度：81
+      \item 複決定係數：0.5564，調整後決定係數：0.5181
+      \item F統計量：14.52 (7, 81)，p值：4.26e-12
+    \end{tablenotes}
+  \end{threeparttable}
+\end{table}
+
+\subsection{J曲線效應理論與檢驗}
+基於ECM模型估計，台灣出口對實質匯率變動的動態反應係數如\hspace{1pt}\hyperref[tab:j_curve_results]{表 \ref{tab:j_curve_results}} 所示。
+
+\begin{table}[h]
+  \centering
+  \begin{threeparttable}
+    \caption{J曲線效應檢驗結果}
+    \label{tab:j_curve_results}
+    \begin{tabular}{lcccccc}
+      \toprule
+      效應期間 & 係數 & 估計值 & 標準誤 & t統計量 & p值 & 符號檢驗 \\
+      \midrule
+      當期效應 & $\beta_1$ & +0.3459          & 0.3883 & 0.891  & 0.3757 & $\times$ 不符合 \\
+      滯後一期 & $\beta_2$ & -0.3468          & 0.3660 & -0.948 & 0.3461 & $\times$ 不符合 \\
+      滯後二期 & $\beta_3$ & -0.6999\tnote{*} & 0.3499 & -2.000 & 0.0488 & $\times$ 不符合 \\
+      \bottomrule
+    \end{tabular}
+
+    \begin{tablenotes}
+      \footnotesize
+      \item 註：\tnote{*}表示在5\%顯著水準下統計顯著。
+      \item 符號檢驗基於J曲線理論預期：$\beta_1 < 0$, $\beta_2 > 0$, $\beta_3 > 0$。
+    \end{tablenotes}
+  \end{threeparttable}
+\end{table}
+\begin{spacing}{1.5}
+檢驗結果顯示，台灣出口對匯率變動的動態反應不符合標準J曲線模式。在當期效應方面，係數$\beta_1 = +0.3459$為正值，這與J曲線理論預期的短期惡化效應截然相反，暗示匯率貶值在當期可能對出口產生正面影響，這種現象可能反映了台灣出口商對匯率變動的快速調適能力，或是存在其他抵銷負面效應的因素。
+
+然而，中期效應的表現更加我們困惑。滯後一期的係數$\beta_2 = -0.3468$呈現負值，不僅未能滿足J曲線理論中中期改善的條件，反而呈現負面效應。這種現象可能反映了匯率調整過程中的複雜動態，包括進口成本上升對出口競爭力的間接影響，以及國際市場對價格變動的反應延遲。
+
+最為值得關注的是長期效應的持續惡化趨勢。滯後二期的係數$\beta_3 = -0.6999$不僅為負值，且數值相當可觀，表明匯率貶值的負面效應在第二個滯後期達到最大。這種持續惡化的模式違背了J曲線理論中長期改善的基本預期，可能反映了台灣出口結構的特殊性質。
+\end{spacing}
+
+\vspace{-0.5cm}
+
+\subsection{ECM機制有效性檢驗}
+
+同樣地基於ECM模型，我們也對$\hat{\lambda}$進行了三項有效性檢驗，結果如\hspace{1pt}\hyperref[tab:validity_check]{表 \ref{tab:validity_check}} 所示，另外，誤差修正項($ECT_{t-1}$)的係數估計結果如\hspace{1pt}\hyperref[tab:ecm_lambda]{表 \ref{tab:ecm_lambda}} 。
+
+\begin{table}[h]
+    \centering
+    \caption{誤差修正機制(ECM)相關檢驗結果} % 總標題
+    \label{tab:ecm_combined}
+
+    % --- 左側子表格 ---
+    \begin{subtable}{0.6\textwidth}
+        \centering
+        \begin{threeparttable}
+            \caption{ECM機制有效性檢驗} % 子標題 a
+            \label{tab:validity_check}
+            \begin{tabular}{lcc}
+                \toprule
+                檢驗項目 & 檢驗條件 & 檢驗結果 \\
+                \midrule
+                1. 統計顯著性 & p值 < 0.05 & \checkmark~顯著 (p=0.0038) \\
+                2. 符號檢驗 & $\hat{\lambda} < 0$ & \checkmark~正確 (-0.0843 < 0) \\
+                3. 穩定性檢驗 & $|\hat{\lambda}| < 1$ & \checkmark~穩定 (|-0.0843| < 1) \\
+                \midrule
+                \textbf{綜合評估} & 所有條件滿足 & \textbf{\checkmark~ECM機制有效} \\
+                \bottomrule
+            \end{tabular}x
+        \end{threeparttable}
+    \end{subtable}%
+    % --- 右側子表格 ---
+    \begin{subtable}{0.4\textwidth}
+        \centering
+        \begin{threeparttable}
+            \caption{誤差修正係數估計結果} % 子標題 b
+            \label{tab:ecm_lambda}
+            \begin{tabular}{lc}
+                \toprule
+                統計量 & 數值 \\
+                \midrule
+                估計係數 ($\hat{\lambda}$) & -0.0843\tnote{***} \\
+                標準誤 ($SE(\hat{\lambda})$) & 0.0283 \\
+                t統計量 ($t_\lambda$) & -2.981 \\
+                p值 & 0.0038 \\
+                \bottomrule
+            \end{tabular}
+            \begin{tablenotes}
+                \footnotesize
+                \item 註：\tnote{***} 表示在 1\% 顯著水準下統計顯著。
+            \end{tablenotes}
+        \end{threeparttable}
+    \end{subtable}
+\end{table}
+\begin{spacing}{1.5}
+檢驗結果表明，誤差修正係數在1\%顯著水準下高度統計顯著，且符號為負、數值介於(-1, 0)之間，滿足有效誤差修正機制的所有條件。此結果為台灣出口與其解釋變數之間存在長期穩定均衡關係提供了的實證支持。
+\end{spacing}
+
+因為有效的調整係數，我們進一步計算了相關的動態調整指標，如\hspace{1pt}\hyperref[tab:adjustment_speed]{表 \ref{tab:adjustment_speed}}。
+\begin{table}[h]
+    \centering
+    \begin{threeparttable}
+        \caption{調整速度分析}
+        \label{tab:adjustment_speed}
+        \begin{tabular}{lc}
+            \toprule
+            指標 & 計算結果 \\
+            \midrule
+            每期調整速度 ($-\hat{\lambda}$) & 8.43\% \\
+            半衰期 ($\frac{\ln(0.5)}{\ln(1+\hat{\lambda})}$) & 7.87 期 \\
+            完全調整時間 ($\frac{-1}{\hat{\lambda}}$) & 11.87 期 \\
+            \bottomrule
+        \end{tabular}
+        \begin{tablenotes}
+            \footnotesize
+            \item 註：計算結果基於誤差修正係數 $\hat{\lambda} = -0.0843$。
+        \end{tablenotes}
+    \end{threeparttable}
+\end{table}
+\begin{spacing}{1.5}
+調整速度為8.43\%，其經濟意義為：當台灣出口因短期衝擊而偏離其由基本面決定的長期均衡水準時，每經過一個季度，該偏離量的8.43\%會被修正。此調整速度相對溫和，反映了經濟系統的內在慣性。
+
+半衰期為7.87期（約為2年），意味著短期衝擊所造成的失衡，需要約2年的時間才能消除一半。完全調整時間約為11.87期（約為3年），顯示了經濟系統從失衡狀態回歸長期均衡的完整過程。
+\end{spacing}
+
+\vspace{-0.5cm}
+\subsection{Marshall-Lerner條件檢驗}
+\subsubsection{出口彈性檢驗}
+我們聚焦於出口彈性部分，檢驗由ARDL模型估計的長期實質匯率彈性（$\gamma_1$）是否滿足Marshall-Lerner條件的出口部分要求，從ARDL模型估計的長期出口彈性$\hat{\gamma}_1$及其標準差，計算得到的t統計量為0.473。詳細檢驗結果如\hspace{1pt}\hyperref[tab:ml_test]{表 \ref{tab:ml_test}}。
+\begin{table}[h]
+    \centering
+    \begin{threeparttable}
+        \caption{Marshall-Lerner條件檢驗結果}
+        \label{tab:ml_test}
+        \begin{tabular}{lc}
+            \toprule
+            項目 & 數值 \\
+            \midrule
+            虛無假設 ($H_0$) & $|\gamma_1| \geq 1$ \\
+            對立假設 ($H_1$) & $|\gamma_1| < 1$ \\
+            檢驗類型 & 正向彈性檢驗 ($H_0: \gamma_1 \geq 1$) \\
+            檢驗統計量 ($t_{ML1}$) & 0.473 \\
+            單尾臨界值 ($t_{0.05, df}$) & -1.665 \\
+            單尾p值 & 0.6812 \\
+            \bottomrule
+        \end{tabular}
+        \begin{tablenotes}
+            \footnotesize
+            \item 註：由於檢驗統計量 (0.473) 大於臨界值 (-1.665)，故不拒絕虛無假設 $H_0$。
+        \end{tablenotes}
+    \end{threeparttable}
+\end{table}
+\begin{spacing}{1.5}
+Marshall-Lerner條件檢驗的結果為台灣長期出口彈性大於或等於1的結論提供了實證支持。首先，這表明在台灣的出口貿易中，數量效應佔據了主導地位。當新台幣貶值時，雖然以外幣計價的台灣商品價格下降，但出口數量的增長幅度足以抵銷甚至超過因價格變動所造成的單位收入減少，最終使得總出口價值呈現正向增長。
+\end{spacing}
+\vspace{-0.5cm}
+\subsubsection{動態Marshall-Lerner條件檢驗}
+\begin{spacing}{1.5}
+ECM模型估計的短期動態係數如\hspace{1pt}\hyperref[tab:short_run_coeffs]{表 \ref{tab:short_run_coeffs}}，又從上述係數，計算得到的累積彈性統計量如\hspace{1pt}\hyperref[tab:cumulative_elasticity]{表 \ref{tab:cumulative_elasticity}}所示。
+\end{spacing}
+
+\begin{table}[h]
+    \centering
+    \caption{短期動態與累積彈性分析} % 總標題
+    \label{tab:dynamic_and_cumulative}
+    % --- 左側子表格 ---
+    \begin{subtable}{0.48\textwidth}
+        \centering
+        \begin{threeparttable}
+            \caption{短期動態係數} % 子標題 a
+            \label{tab:short_run_coeffs}
+            \begin{tabular}{lcc}
+                \toprule
+                係數 & 估計值 & 標準誤 \\
+                \midrule
+                $\beta_0$ (當期效應) & +0.3459 & 0.3883 \\
+                $\beta_1$ (滯後1期) & -0.3468 & 0.3660 \\
+                $\beta_2$ (滯後2期) & -0.6999 & 0.3499 \\
+                \bottomrule
+            \end{tabular}
+        \end{threeparttable}
+    \end{subtable}%
+    \hfill % 將兩個子表格推向兩側
+    % --- 右側子表格 ---
+    \begin{subtable}{0.48\textwidth}
+        \centering
+        \begin{threeparttable}
+            \caption{累積彈性分析} % 子標題 b
+            \label{tab:cumulative_elasticity}
+            \begin{tabular}{lc}
+                \toprule
+                項目 & 數值 \\
+                \midrule
+                累積彈性 ($\beta_0 + \beta_1 + \beta_2$) & -0.7009 \\
+                標準誤 & 0.5256 \\
+                t統計量 & 0.569 \\
+                p值 & 0.2854 \\
+                Marshall-Lerner條件 & \checkmark~滿足 \\
+                \bottomrule
+            \end{tabular}
+            \begin{tablenotes}
+                \footnotesize
+                \item 註：累積彈性為負值，滿足馬歇爾-勒納條件的理論預期。
+            \end{tablenotes}
+        \end{threeparttable}
+    \end{subtable}
+\end{table}
+\begin{spacing}{1.5}
+統計檢驗的結果，由於p值為0.2854，遠大於0.05的標準顯著水準，本研究在統計上無法拒絕虛無假設。這個結果表明，短期累積彈性在統計意義上滿足Marshall-Lerner條件的要求。雖然個別期間的效應呈現複雜的動態變化，但從整體累積效應的角度來看，匯率變動對台灣出口的短期影響仍然符合理論預期的基本框架。
+
+儘管短期內各期效應呈現複雜的動態模式，從正向效應轉為負向效應再持續負向的序列變化（正-負-負），但其累積效應的統計檢驗結果仍然支持匯率政策在短期內具有改善出口表現的潛力。這種看似矛盾的現象實際上反映了台灣出口經濟結構的特殊性質。
+
+這種動態反應模式可能源於即時反應與成本滯後效應的交互作用。當新台幣貶值發生時，台灣出口商品在國際市場上的價格競爭力立即獲得提升，這種即時的價格優勢可能在當期就產生部分正面的出口效應。然而，隨著時間推移，匯率貶值所帶來的進口原料成本上升效應逐漸顯現，特別是台灣製造業高度依賴進口原物料和中間財的特性，使得生產成本的增加開始抵銷初期的價格競爭優勢，因而在後續期間產生負面影響。
+
+\end{spacing}
+\section{結論}
+\begin{spacing}{1.5}
+我們在透過建構誤差修正模型，深入剖析台灣出口與實質匯率之間的短期動態調整與長期均衡關係。實證結果不僅驗證了模型的有效性，更揭示了匯率政策傳導機制的複雜性，但我們在在J曲線效應與Marshall-Lerner條件的比較分析中，得出了以下的結論：
+
+\vspace{-0.3cm}
+\begin{enumerate}
+    \item 誤差修正模型的有效性獲得了驗證。誤差修正項係數（$\lambda$）的估計值為-0.0843，在統計上高度顯著，且其符號與大小均滿足理論預期的收斂條件（$-1 < \lambda < 0$）。此結果證實了台灣出口與其主要決定因素之間存在一個穩定的長期均衡關係，當短期衝擊導致出口偏離此一均衡路徑時，市場機制將以每期約8.43\%的速度進行修正。儘管此調整速度相對溫和，對應的半衰期約需兩年，確認了短期動態最終將收斂於一個可預測的長期趨勢。
+    \item 在匯率政策的有效性評估上，我們發現Marshall-Lerner條件在台灣的出口部門中得到支持。無論是基於共整合關係的長期彈性檢驗，或是考量短期動態的累積彈性分析，結果均無法拒絕出口彈性大於或等於1的虛無假設。新台幣貶值對提升台灣出口至美國具有正面效果，數量效應在長期與短期累積的層面上均能超越價格效應。此一結論肯定了匯率作為影響台灣出口競爭力的關鍵變數，其長期趨勢符合古典貿易理論的預期。
+    \item 然而，儘管長期與累積效應符合理論框架，匯率變動的短期動態路徑卻未呈現典型的J曲線效應。實證結果顯示，匯率貶值在當期並未造成出口惡化，反而在滯後一至二期出現了與理論預期相反的負向衝擊，是否代表傳統J曲線理論所強調的「價格效應先行、數量效應滯後」的機制，在台灣的經濟結構中可能被更複雜的因素所掩蓋。
+\end{enumerate}
+我們推斷，此一現象與台灣出口產業與美國供應鏈的結構特徵密切相關。台灣的出口高度依賴進口的原物料、零組件與中間財。因此，當新台幣貶值時，雖然出口商品的最終價格在國際市場上變得更具競爭力，但進口生產要素的成本也隨之立即上升。這種來自供給端的成本壓力，可能在短期內迅速抵銷甚至超越了需求端的價格優勢，從而導致出口表現在滯後期反而呈現負向反應。此發現凸顯了在分析現代開放經濟體的匯率傳導機制時，要考慮不同於傳統的需求面彈性分析，而將產業結構的成本納入考量。
+
+綜上所述，我們的結論帶來了兩種不同面向的意涵。首先，研究結果支持匯率政策在長期維度上對改善台灣出口的有效性，證實了Marshall-Lerner條件的成立。再者，實證結果代表著短期傳導路徑的非典型特徵，J曲線效應並不明顯，這可能歸因於台灣在美國供應鏈中的獨特定位。對於政策制定者而言，此結論意味著匯率工具雖具長期結構性影響力，但不應期待其能帶來可預測的短期出口提振效果，反而需警惕因進口成本上升而對出口供應鏈造成的短期壓力。
+
+\end{spacing}
+\begin{thebibliography}{99}
+\bibitem{Bahmani2004}
+Bahmani-Oskooee, M., \& Ratha, A. (2004). The J-curve: a literature review. \textit{Applied Economics, 36}(13), 1377-1398.
+\bibitem{Engle1987}
+Engle, R. F., \& Granger, C. W. J. (1987). Co-integration and error correction: Representation, estimation, and testing. \textit{Econometrica, 55}(2), 251-276.
+\bibitem{Granger1974}
+Granger, C. W. J., \& Newbold, P. (1974). Spurious regressions in econometrics. \textit{Journal of Econometrics, 2}(2), 111-120.
+\bibitem{Hsing2005}
+Hsing, Y. (2005). A study of the J-curve for Japan, Korea and Taiwan. \textit{Japan and the World Economy, 17}(1), 109-115.
+\bibitem{Johansen1988}
+Johansen, S. (1988). Statistical analysis of cointegration vectors. \textit{Journal of Economic Dynamics and Control, 12}(2-3), 231-254.
+\bibitem{Krugman2018}
+Krugman, P. R., Obstfeld, M., \& Melitz, M. J. (2018). \textit{International economics: Theory and policy} (11th ed.). Pearson.
+\bibitem{Lerner1944}
+Lerner, A. P. (1944). \textit{The economics of control: Principles of welfare economics}. Macmillan.
+\bibitem{Lin2009}
+Lin, C. H., \& Wang, C. C. (2009). An empirical study on the J-curve effect for Taiwan’s bilateral trade with its major trading partners. \textit{Applied Economics Letters, 16}(16), 1639-1644.
+\bibitem{Magee1973}
+Magee, S. P. (1973). Currency contracts, pass-through, and devaluation. \textit{Brookings Papers on Economic Activity, 1973}(1), 303-325.
+\bibitem{Marshall1923}
+Marshall, A. (1923). \textit{Money, credit and commerce}. Macmillan.
+\bibitem{Pesaran2001}
+Pesaran, M. H., Shin, Y., \& Smith, R. J. (2001). Bounds testing approaches to the analysis of level relationships. \textit{Journal of Applied Econometrics, 16}(3), 289-326.
+\end{thebibliography}
+\end{document}
