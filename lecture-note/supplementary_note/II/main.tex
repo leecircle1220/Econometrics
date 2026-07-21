@@ -1,0 +1,1915 @@
+\documentclass[a4paper, 10pt]{article}
+\usepackage{graphicx} % Required for inserting images
+\usepackage[shortlabels,inline]{enumitem}
+\usepackage[margin=1in]{geometry}
+\usepackage{mathtools,amsthm,amssymb}
+\usepackage{indentfirst}
+\usepackage{setspace} % For line spacing
+\usepackage{parskip}
+\usepackage{lipsum}
+\usepackage{hyperref}
+\usepackage{tcolorbox}
+\usepackage{float}
+
+\renewcommand{\proofname}{\bf Pf:} % 修改 Proof 標頭
+\theoremstyle{definition}	% 定理環境 style 改用正體，預設還有 remark, plain 兩種
+\newtheorem{theorem}{Thm} 
+\newtheorem{property}{Property}
+\newtheorem*{definition}{Def}
+\newtheorem{assumption}{Assumption}
+\newtheorem*{remark}{Remark}
+\newtheorem{exercise}{Exercise}
+\newtheorem{example}{Example}
+
+\title{Econometrics Note (II) \footnote{Mainly adapted from Jeffrey M. Wooldridge—Introductory Econometrics A Modern Approach, 7e}}
+\author{Yuan-Ting Lee} 
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Basic Regression Analysis with Time Series Data}
+\subsection{The Nature of Time Series Data}
+
+An obvious characteristic of time series data that distinguishes them from cross-sectional data is \textbf{temporal ordering}. Also, another typical feature is \textbf{serial correlation non-independence}. We must recognize that the past can affect the future, but not vice versa. Economic time series satisfy the intuitive requirements for being outcomes of random variables. 
+\begin{remark} Time series analysis focus on the modeling the \textit{dependence} of a variable on \textit{its own path} and on the \textit{present} and \textit{past values} of other vairables.
+    \begin{itemize}
+        \item A sequence of random variables indexed by time is called a \textbf{stochastic process} or a \textbf{time series process}.
+        \item A time series data set, we obtain one possible outcome, or realization, of the stochastic process.
+        \item The sample size for a time series data set is the number of time periods over which we observe the variables of interest.
+    \end{itemize}
+\end{remark}
+
+\subsection{Examples of Time Series Regression Models}
+\subsubsection{Static Models}
+
+A \textbf{static model} relating \( y \) to \( z \) is
+\begin{equation}
+    y_t = \beta_0 + \beta_1 z_t + u_t, \quad t = 1, 2, \dots, n. \label{p.336,10.1}
+\end{equation}
+Since we are modeling a contemporaneous relationship between \( y \) and \( z \), ``static model'' comes from this fact. Usually, a static model is postulated when a change in \( z \) at time \( t \) is believed to have an immediate effect on \( y \): \( \Delta y_t = \beta_1 \Delta z_t \), when \( \Delta u_t = 0 \). Static regression models are also used when we are interested in knowing the tradeoff between \( y \) and \( z \). 
+\begin{example}
+    \textbf{static Phillips curve}
+        \begin{equation}
+            inf_t = \beta_0 + \beta_1 unem_t + u_t, \label{p.336,10.2}
+        \end{equation}
+    where \( inf_t \) is the annual inflation rate and \( unem_t \) is the annual unemployment rate.
+    This can be used to study the contemporaneous tradeoff between inflation and unemployment.
+\end{example}
+
+\subsubsection{Finite Distributed Lag Models}
+
+In a \textbf{finite distributed lag (FDL) model}, we allow one or more variables to affect \( y \) with a lag. We consider the model 
+\begin{equation}
+    gfr_t = \alpha_0 + \delta_0 pe_t + \delta_1 pe_{t-1} + \delta_2 pe_{t-2} + u_t, \label{p.336,10.4}
+\end{equation}
+where \( gfr_t \) is the general fertility rate (children born per 1,000 women of childbearing age) and \( pe_t \) is the real dollar value of the personal tax exemption.
+Equation (\ref{p.336,10.4}) is an example of the model
+\begin{equation}
+    y_t = \alpha_0 + \delta_0 z_t + \delta_1 z_{t-1} + \delta_2 z_{t-2} + u_t, \label{p.336,10.5}
+\end{equation}
+which is an FDL of \textit{order two}. Suppose that \( z \) is a constant, equal to \( c \), in all time periods before time \( t \). At time \( t \), \( z \) increases by one unit to \( c+1 \) and then reverts to its previous level at time \( t+1 \). (That is, the increase in \( z \) is temporary.) We can show as follow
+\[
+\ldots, z_{t-2} = c,\ z_{t-1} = c, \ z_t = c+1, \ z_{t+1} = c, \ z_{t+2} = c, \dots
+\]
+We set the error term in each time period to zero. Then,
+\begin{align*}
+    y_{t-1} &= \alpha_0 + \delta_0 c + \delta_1 c + \delta_2 c, \\
+    y_t &= \alpha_0 + \delta_0 (c + 1) + \delta_1 c + \delta_2 c, \\
+    y_{t+1} &= \alpha_0 + \delta_0 c + \delta_1 (c + 1) + \delta_2 c, \\
+    y_{t+2} &= \alpha_0 + \delta_0 c + \delta_1 c + \delta_2 (c + 1), \\
+    y_{t+3} &= \alpha_0 + \delta_0 c + \delta_1 c + \delta_2 c,
+\end{align*}
+From the first two equations, \( y_t - y_{t-1} = \delta_0 \), which shows that \( \delta_0 \) is the immediate change in \( y \) due to the one-unit increase in \( z \) at time \( t \).\\
+Similarly, \( \delta_1 = y_{t+1} - y_{t-1} \) is the change in \( y \) one period after the temporary change and \( \delta_2 = y_{t+2} - y_{t-1} \) is the change in \( y \) two periods after the change. At time \( t+3 \), \( y \) has reverted back to its initial level: \( y_{t+3} = y_{t-1} \). This is because we have assumed that only two lags of \( z \) appear in (\ref{p.336,10.5}). When we graph the \( \delta_j \) as a function of \( j \), we obtain the \textbf{lag distribution}, which summarizes the dynamic effect that a temporary increase in \( z \) has on \( y \).\\
+If the change in \( y \) due to a \textbf{permanent} increase in \( z \). Before time \( t \), \( z \) equals the constant \( c \). At time \( t \), \( z \) increases permanently to \( c + 1 \): \( z_s = c \), \( s < t \) and \( z_s = c + 1 \), \( s \geq t \). Setting the errors to zero, we have 
+\begin{align*}
+    y_{t-1} &= \alpha_0 + \delta_0 c + \delta_1 c + \delta_2 c, \\
+    y_t &= \alpha_0 + \delta_0 (c + 1) + \delta_1 c + \delta_2 c, \\
+    y_{t+1} &= \alpha_0 + \delta_0 (c + 1) + \delta_1 (c + 1) + \delta_2 c, \\
+    y_{t+2} &= \alpha_0 + \delta_0 (c + 1) + \delta_1 (c + 1) + \delta_2 (c + 1).
+\end{align*}
+With the permanent increase in \( z \), after one period, \( y \) has increased by \( \delta_0 + \delta_1 \), and after two periods, \( y \) has increased by \( \delta_0 + \delta_1 + \delta_2 \) which is the \textbf{long-run change} in \( y \) given a permanent increase in \( z \).
+\begin{remark} Transitory shock : effect of a post one-time shock of the current value of Y.
+\begin{equation*}
+    \frac{\Delta Y_t}{\Delta Z_{t-s}} = \delta_s
+\end{equation*}
+    \( \delta_s\) is called the \textbf{impact propensity} or \textbf{impact multiplier}.\\
+Permanent shock : the explanatory variable permanently increases by one unit
+    \begin{equation*}
+    \frac{\Delta Y_t}{\Delta Z_{t-q}} + \cdots + \frac{\Delta Y}{\Delta Z_{t}} = \delta_q + \delta_{q-1} + \cdots + \delta_0
+\end{equation*}
+    \( \delta_q + \delta_{q-1} + \cdots + \delta_0 \) is called the\textbf{ long-run propensity (LRP)} or \textbf{long-run multiplier}.
+\end{remark}
+
+An FDL of order \( q \) is written as
+\begin{equation}
+    y_t = \alpha_0 + \delta_0 z_t + \delta_1 z_{t-1} + \dots + \delta_q z_{t-q} + u_t. \label{p.338,10.6}
+\end{equation}
+This contains the static model as a special case by setting \( \delta_1, \delta_2, \dots, \delta_q \) equal to zero. For estimating a distributed lag model is to test whether \( z \) has a lagged effect on \( y \). The impact propensity is always the coefficient on the contemporaneous \( z \), \( \delta_0 \). In the general case, the lag distribution can be plotted by graphing the (estimated) \( \delta_j \) as a function of \( j \). \\
+The LRP is the cumulative effect after all changes have taken place; it is simply the sum of all of the coefficients on the \( z_{t-j} \):
+\begin{equation}
+    \text{LRP} = \delta_0 + \delta_1 + \dots + \delta_q. \label{p.338,10.7}
+\end{equation}
+Interestingly, even when the \( \delta_j\) cannot be precisely estimated, we can often get
+good estimates of the LRP.
+
+\subsection{Finite Sample Properties of OLS under Classical Assumptions}
+We focus on the finite sample, or small sample, properties of OLS under standard assumptions.
+
+\subsubsection{Unbiasedness of OLS}
+
+\begin{tcolorbox}[colback=blue!5!white, colframe=blue!80!black, title=Assumption TS.1 -- Linear in Parameters]
+The stochastic process \(\{(x_{t1}, x_{t2}, \ldots, x_{tk}, y_t) : t = 1, 2, \ldots, n\}\) follows the linear model
+\begin{equation}
+    y_t = \beta_0 + \beta_1 x_{t1} + \cdots + \beta_k x_{tk} + u_t, \label{p.339,10.8}
+\end{equation}
+where \(\{u_t : t = 1, 2, \ldots, n\}\) is the sequence of errors or disturbances. Here, \(n\) is the number of observations (time periods).
+\end{tcolorbox}
+
+In the notation \(x_{tj}\), \(t\) denotes the time period, and \(j\) is a label to indicate one of the \(k\) explanatory variables.
+
+We let \(\mathbf{x}_t = (x_{t1}, x_{t2}, \ldots, x_{tk})\) denote the set of all independent variables in the equation at time \(t\). Further, \(\mathbf{X}\) denotes the collection of all independent variables for all time periods. To think of \(\mathbf{X}\) as an array, let it have \(n\) rows and \(k\) columns. In econometric software, the \(t^{\text{th}}\) row of \(\mathbf{X}\) is \(\mathbf{x}_t\), representing all independent variables at time \(t\).
+
+
+\begin{tcolorbox}[colback=blue!5!white, colframe=blue!80!black, title=Assumption TS.2 -- No Perfect Collinearity]
+In the sample (and therefore in the underlying time series process), no independent variable is constant nor a perfect linear combination of the others.
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=blue!5!white, colframe=blue!80!black, title=Assumption TS.3 -- Zero Conditional Mean]
+For each \(t\), the expected value of the error \(u_t\), given the explanatory variables for \textit{all} time periods, is zero. Mathematically,
+\begin{equation}
+    \mathbb{E}(u_t \mid \mathbf{X}) = 0, \quad t = 1, 2, \ldots, n.
+\end{equation}
+\end{tcolorbox}
+Assumption TS.3 implies that the error at time \( t \), \( u_t \), is uncorrelated with each explanatory variable in \textit{every} time period. We require \( u_t \) to be uncorrelated with the explanatory variables also dated at time \( t \): in conditional mean terms,
+\begin{equation}
+    \mathbb{E}(u_t \mid x_{t1}, \dots, x_{tk}) = \mathbb{E}(u_t \mid x_t) = 0. \label{p.340,10.10}
+\end{equation}
+When (\ref{p.340,10.10}) holds, we say that the \( x_{tj} \) are \textbf{contemporaneously exogenous} which implies that \( u_t \) and the explanatory variables are contemporaneously uncorrelated: \( \text{Corr}(x_{tj}, u_t) = 0 \), for all \( j \). If the following holds
+\begin{equation*}
+    \mathbb{E}(u_t \mid \mathbf{x}_{1}, \mathbf{x}_{2}, \ldots, \mathbf{x}_k) = 0
+\end{equation*}
+then it's called \textbf{sequential exogeneity}.
+While Assumption TS.3 requires more than contemporaneous exogeneity: \( u_t \) must be uncorrelated with \( x_{sj} \), even when \( s \neq t \), we say the explanatory variables are \textbf{strictly exogenous}.\\
+Assumption TS.3 puts no restriction on correlation in the independent variables or in the \( u_t \) across time. It only says that the average value of \( u_t \) is unrelated to the independent variables in all time periods.\\
+But, two leading candidates for failure are:
+\begin{itemize}
+    \item omitted variables, and
+    \item measurement error in some of the regressors.
+\end{itemize}
+In the simple static regression model:
+\begin{equation*}
+    y_t = \beta_0 + \beta_1 z_t + u_t,
+\end{equation*}
+Assumption TS.3 requires not only that \( u_t \) and \( z_t \) are uncorrelated, but that \( u_t \) is also uncorrelated with \emph{past and future} values of \( z \). This has two implications:
+\begin{enumerate}
+    \item \( z \) can have no lagged effect on \( y \), otherwise we should estimate a distributed lag model.
+    \item strict exogeneity excludes the possibility that changes in the error term today can cause future changes in \( z \). This rules out feedback from \( y \) to future values of \( z \).
+\end{enumerate}
+Assumption TS.3 has the advantage of being more realistic about the random nature of the $x_{tj}$, while it isolates the necessary assumption about how $u_t$ and the explanatory variables are related in order for OLS to be unbiased.
+\begin{tcolorbox}[colback=blue!5!white, colframe=blue!80!black, title=Theorem 1 -- Unbiasedness of OLS]
+Under Assumptions TS.1, TS.2, and TS.3, the OLS estimators are unbiased conditional on \( \mathbf{X} \), and therefore unconditionally as well when the expectations exist:
+\[
+\mathbb{E}(\hat{\beta}_j) = \beta_j, \quad j = 0, 1, \dots, k.
+\]
+\end{tcolorbox}
+If this assumption fails, OLS is not guaranteed to be unbiased.
+
+\subsubsection{The Variances of the OLS Estimators and the Gauss-Markov Theorem}
+\begin{tcolorbox}[colback=blue!5!white, colframe=blue!80!black, title=Assumption TS.4 -- Homoskedasticity]
+\textbf{Conditional on \( \mathbf{X} \), the variance of \( u_t \) is the same for all \( t \)}:
+\[
+\text{Var}(u_t \mid \mathbf{X}) = \text{Var}(u_t) = \sigma^2, \quad t = 1, 2, \dots, n.
+\]
+\end{tcolorbox}
+This assumption means that the variance of the error does not depend on the explanatory variables \( \mathbf{X} \), and that the variance is constant over time. It is sufficient that $u_t$ and $\mathbf{X}$ are independent.
+\begin{tcolorbox}[colback=blue!5!white, colframe=blue!80!black, title=Assumption TS.5 -- No Serial Correlation]
+\textbf{Conditional on \( \mathbf{X} \), the errors in two different time periods are uncorrelated}:
+\[
+\text{Corr}(u_t, u_s \mid \mathbf{X}) = 0, \quad \text{for all } t \ne s.
+\]
+\end{tcolorbox}
+The simplest way to understand TS.5 is that the errors \( u_t \) should be uncorrelated across time, after conditioning on the regressors \( \mathbf{X} \). This means:
+\begin{equation}
+    \mathrm{Corr}(u_t, u_{t-j}) = 0, \ \text{for all } j \ne 0. \label{p.342,10.12}
+\end{equation}
+When this fails, we say there is \textbf{serial correlation} or \textbf{autocorrelation}. That is, errors from adjacent time periods tend to move together.\\
+Assumptions TS.1 through TS.5 are the time series versions of the Gauss–Markov assumptions. They ensure that:
+\begin{itemize}
+  \item the OLS estimators are unbiased,
+  \item we can calculate valid standard errors.
+\end{itemize}
+\begin{tcolorbox}[colback=blue!5!white, colframe=blue!80!black, title=Theorem 10.2 -- OLS Sampling Variances]
+Under the time series Gauss–Markov Assumptions TS.1 through TS.5, the variance of \( \hat{\beta}_j \), conditional on \( \mathbf{X} \), is
+\begin{equation}
+\text{Var}(\hat{\beta}_j \mid \mathbf{X}) = \frac{\sigma^2}{SST_j(1 - R_j^2)}, \quad j = 1, \dots, k, \label{p.343,10.13}
+\end{equation}
+where:
+\begin{itemize}
+  \item \( SST_j \) is the total sum of squares of \( x_j \),
+  \item \( R_j^2 \) is the \( R^2 \) from regressing \( x_j \) on the other independent variables.
+\end{itemize}
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=blue!5!white, colframe=blue!80!black, title=Theorem 10.3 -- Unbiased Estimation of \( \sigma^2 \)]
+Under Assumptions TS.1 through TS.5, the estimator $\hat{\sigma}^2 = \frac{SSR}{n - k - 1}$
+is an unbiased estimator of \( \sigma^2 \), where \( SSR \) is the sum of squared residuals.
+i.e $\mathbb{E}(\hat{\sigma}^2) = \sigma^2$. 
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=blue!5!white, colframe=blue!80!black, title=Theorem 10.4 -- Gauss–Markov Theorem]
+Under Assumptions TS.1 through TS.5, the OLS estimators are the \textbf{best linear unbiased estimators} (BLUE), conditional on \( \mathbf{X} \).
+\end{tcolorbox}
+This final result tells us that, among all linear and unbiased estimators, OLS achieves the smallest variance—just as in the cross-sectional setting.
+
+\subsubsection{Inference under the Classical Linear Model Assumptions}
+
+\begin{tcolorbox}[colback=blue!5!white, colframe=blue!80!black, title=Assumption TS.6 -- Normality]
+The errors \( u_t \) are independent of \( \mathbf{X} \) and are independently and identically distributed as:
+\[
+u_t \overset{\text{i.i.d.}}{\sim} \text{Normal}(0, \sigma^2)
+\]
+\end{tcolorbox}
+Assumption TS.6 implies TS.3, TS.4, and TS.5, but it is stronger because it includes both independence and normality.
+\begin{tcolorbox}[colback=blue!5!white, colframe=blue!80!black, title=Theorem 10.5 -- Normal Sampling Distributions]
+Under Assumptions TS.1 through TS.6, the classical linear model (CLM) assumptions for time series hold. Then:
+\begin{itemize}
+  \item The OLS estimators are normally distributed, conditional on \( \mathbf{X} \).
+  \item Under the null hypothesis, each \( t \)-statistic follows a \( t \)-distribution.
+  \item Each \( F \)-statistic follows an \( F \)-distribution.
+\end{itemize}
+\end{tcolorbox}
+It implies that, when Assumptions TS.1 through TS.6 hold, everything we have learned about estimation and inference for cross-sectional regressions applies directly to time series regressions. Thus, $t$ statistics can be used for testing statistical significance of individual explanatory variables, and $F$ statistics can be used to test for joint significance.
+
+
+
+\newpage
+
+\section{Further Issues in Using OLS with Time Series Data}
+\setcounter{equation}{0}
+\setcounter{theorem}{0}
+\setcounter{assumption}{0}
+
+\subsection{Stationary and Nonstationary Time Series}
+\subsubsection{Stationary and Weakly Dependent Time Series}
+The notion of a \textbf{stationary process} has played an important role in the analysis of time series. A stationary time series process is one in which the probability distributions are stable over time. If we take any collection of random variables in the sequence and then shift that sequence ahead $h$ time periods, the joint probability distribution must remain unchanged.\\
+A simpler, more useful way of describing a stochastic process is to give the \textbf{moments} of the process, particularly the first and second moments, which are called the \textbf{mean}, \textbf{variance}, and \textbf{autocovariance} functions.
+
+\subparagraph{Mean} The mean function \( \mu(t) \) is defined by:
+\begin{equation*}
+    \mu(t) = \mathbb{E}[X(t)]
+\end{equation*}
+
+\paragraph{Variance}
+The variance function \( \sigma^2(t) \) is defined by:
+\[
+\sigma^2(t) = \text{Var}[X(t)]
+\]
+
+\paragraph{Autocovariance}
+We must define the \textbf{autocovariance function} \( \gamma(t_1, t_2) \), which is the covariance of \( X(t_1) \) with \( X(t_2) \), namely:
+\[
+\gamma(t_1, t_2) = \mathbb{E}\left[ (X(t_1) - \mu(t_1)) (X(t_2) - \mu(t_2)) \right]
+\]
+Note: The variance function is a special case of the autocovariance function when \( t_1 = t_2 \).
+
+\paragraph{Stationary Stochastic Process.}  
+The stochastic process \( \{x_t: t = 1, 2, \dots \} \) is \textbf{stationary} if for every collection of time indices \( 1 \leq t_1 < t_2 < \cdots < t_k \), the joint distribution of \( (x_{t_1}, x_{t_2}, \ldots, x_{t_k}) \) is the same as the joint distribution of \( (x_{t_1+h}, x_{t_2+h}, \ldots, x_{t_k+h}) \) for all integers \( h \geq 1 \).\\
+One implication (by choosing \( m = 1 \) and \( t_1 = 1 \)) is that \( x_t \) has the same distribution as \( x_1 \) for all \( t = 2, 3, \ldots \). In other words, the sequence \( \{x_t : t = 1, 2, \ldots\} \) is \textit{identically distributed}. Again, this places no restrictions on how \( x_t \) and \( x_{t+1} \) are related to one another; indeed, they may be highly correlated.\\
+A stochastic process that is not stationary is said to be a \textbf{nonstationary process}. It can be very difficult to determine whether the data we have collected were generated by a stationary process. However, it is easy to spot certain sequences that are not stationary.
+\begin{remark}
+In particular, if \( n = 1 \), strict stationarity implies that the distribution of \( X(t) \) is the same for all \( t \), so that, provided the first two moments are finite, we have
+\[
+\mu(t) = \mu, \quad \sigma^2(t) = \sigma^2
+\]
+which are both constants and do not depend on \( t \).\\
+If \( n = 2 \), the joint distribution of \( X(t_1) \) and \( X(t_2) \) depends only on \( (t_2 - t_1) \), which is called the \textbf{lag}.
+Thus, the autocovariance function \( \gamma(t_1, t_2) \) also depends only on \( (t_2 - t_1) \), and may be written as \( \gamma(\tau) \), where
+\begin{align*}
+    \gamma(\tau) &= \mathbb{E} \left[ (X(t) - \mu)(X(t+\tau) - \mu) \right]\\ 
+    &= \text{Cov}[X(t), X(t+\tau)]
+\end{align*}
+is called the \textbf{autocovariance coefficient at lag \( \tau \)} and this will be abbreviated to acv.f.\\
+The size of an autocovariance coefficient depends on the units in which \( X(t) \) is measured. It's useful to standardize the acv.f. to produce a function called the \textbf{autocorrelation function}, defined as:
+\[
+\rho(\tau) = \frac{\mathrm{Cov}[(X(t), X(t+\tau)]}{\sqrt{\mathrm{Var}(X(t))}\sqrt{\mathrm{Var}(X(t+\tau))}} = \frac{\gamma(\tau)}{\sqrt{\gamma(0)}\sqrt{\gamma(0)}} = \frac{\gamma(\tau)}{\gamma(0)}
+\]
+Note: the variance of $X(t)$ is $\gamma(0)$, and by the stationarity, the the variance of $X(t)$ at any other time $X(t+\tau)$ is also $\gamma(0)$.
+\end{remark}
+
+\paragraph{Covariance Stationary Process.}
+A weaker and more practical condition is \textbf{covariance stationarity}. A process \( \{x_t: t = 1, 2, \dots \} \) is covariance stationary if:
+\begin{itemize}
+    \item \( \mathbb{E}(x_t) = \mu \) is constant,
+    \item \( \text{Var}(x_t) = \sigma^2 \) is constant,
+    \item \( \text{Cov}(x_t, x_{t+\tau})  = \gamma(\tau)\) depends only on the lag \( \tau \), not on the specific time \( t \).\\
+    By letting $\tau =0$, we note that the above assumption about the acv.f. implies that the variance, as well as the mean, is constant. 
+\end{itemize}
+It only requires the first two moments and the autocovariances to be time-invariant.
+
+\subsubsection{Weakly Dependent Time Series}
+Loosely speaking, a stationary time series process \( \{x_t : t = 1, 2, \ldots\} \) is said to be \textbf{weakly dependent} if \( x_t \) and \( x_{t+h} \) are ``almost independent'' as \( h \to \infty \), without bound.\\
+Covariance stationary sequences can be characterized in terms of correlations: a covariance stationary time series is \textbf{weakly dependent} if the correlation between \( x_t \) and \( x_{t+h} \) goes to zero ``sufficiently quickly'' as \( h \to \infty \). As the variables get farther apart in time, the correlation between them becomes smaller and smaller. Covariance stationary sequences where \( \text{Corr}(x_t, x_{t+h}) \to 0 \) as \( h \to \infty \) are said to be \textbf{asymptotically uncorrelated}.
+\begin{remark}.
+    \begin{itemize}
+        \item It replaces the assumption of random sampling in implying that the LLN and the CLT hold.
+        \item Stationary, weakly dependent time series are ideal for use in multiple regression analysis.
+        \item A trending series, though certainly nonstationary, \textit{can} be weakly dependent.
+    \end{itemize}
+\end{remark}
+
+\paragraph{White Noise}
+We use $y$ to denote observed series of interest. Suppose that
+\begin{equation*}
+    y_t = e_t \quad e_t \sim (0, \sigma^2),
+\end{equation*}
+where the “shock,” $e_t$, is uncorrelated over time. We say that $e_t$, and hence $y_t$, is serially uncorrelated. We also assume that $\sigma^2 < \infty$. Such process, with zero mean, constant variance, and no serial correlation, is called zero-mean white noise, or simply white noise. We often write 
+\begin{equation*}
+    e_t \sim \mathrm{WN}(0, \sigma^2)
+\end{equation*}
+and hence
+\begin{equation*}
+    y_t \sim \mathrm{WN}(0, \sigma^2).
+\end{equation*}
+Although \( \varepsilon_t \), and hence \( y_t \), are serially uncorrelated, they are not necessarily serially independent, because they are not necessarily normally distributed.
+If in addition to being serially uncorrelated, \( y \) is serially independent, then we say that \( y \) is \textbf{independent white noise}. We write:
+\[
+y_t \overset{\text{iid}}{\sim} (0, \sigma^2)
+\]
+and we say that “\( y \) is independently and identically distributed with zero mean and constant variance.” 
+Let’s characterize the dynamic stochastic structure of white noise, \( y_t \sim \text{WN}(0, \sigma^2) \). By construction, the unconditional mean of \( y \) is
+\[
+\mathbb{E}(y_t) = 0,
+\]
+and the unconditional variance of \( y \) is
+\[
+\text{Var}(y_t) = \sigma^2.
+\]
+The unconditional mean and variance are constant. In fact, the unconditional mean and variance must be constant for any covariance stationary process.\\
+We need to compute and examine its mean and its autocovariance function. Fortunately, however, it’s very simple.
+Because white noise is, by definition, uncorrelated over time, all the autocovariances, and hence all the autocorrelations, are zero beyond displacement 0. The autocovariance function for a white noise process is
+\[
+\gamma(\tau) = 
+\begin{cases}
+\sigma^2, & \tau = 0 \\
+0,        & \tau \geq 1
+\end{cases}
+\]
+and the autocorrelation function for a white noise process is
+\[
+\rho(\tau) = 
+\begin{cases}
+1, & \tau = 0 \\
+0, & \tau \geq 1.
+\end{cases}
+\]
+
+\paragraph{Moving Average Process of Order “1”}
+The simplest example of a weakly dependent time series is an independent, identically distributed sequence: a sequence that is independent is trivially weakly dependent. A more interesting example of a weakly dependent sequence is
+\begin{equation}
+x_t = e_t + \alpha_1 e_{t-1}, \quad t = 1, 2, \ldots,
+\label{eq:11.1}
+\end{equation}
+where \( e_t \overset{iid}{\sim} (0, \sigma_e^2) \).
+The process \( \{x_t\} \) is called a \textbf{moving average process of order one [MA(1)]}: \( x_t \) is a weighted average of \( e_t \) and \( e_{t-1} \); in the next period, we drop \( e_{t-1} \), and then \( x_{t+1} \) depends on \( e_t \) and \( e_{t+1} \). Setting the coefficient of \( e_t \) to 1 in (\ref{eq:11.1}) is done without loss of generality. Adjacent terms in the sequence are correlated:
+\begin{align*}
+    \mathbb{E}(x_t) &= \mathbb{E}(e_t + \alpha_1 e_{t-1}) = 0 \\
+    \mathbb{E}(x_{t+h}) &= \mathbb{E}(e_{t+h} + \alpha_1 e_{t+h-1}) = 0 \\
+    \mathrm{Var}(x_t) &= \mathrm{Var}(e_t + \alpha_1 e_{t-1}) = \mathrm{Var}(e_t) + \mathrm{Var}(\alpha_1 e_{t-1}) = \sigma_e^2 + \alpha^2 \cdot \sigma_e^2 = (1 + \alpha^2)\sigma_e^2\\
+    \mathrm{Var}(x_{t+h}) &= \mathrm{Var}(e_{t+h} + \alpha_1 e_{t+h-1}) = \mathrm{Var}(e_{t+h}) + \mathrm{Var}(\alpha_1 e_{t+h-1}) = \sigma_e^2 + \alpha^2 \cdot \sigma_e^2 = (1 + \alpha^2)\sigma_e^2\\
+    \mathrm{Cov}(x_t, x_{t+1}) &= \mathrm{Cov}(e_t+\alpha_1e_{t-1}, e_{t+1}+\alpha_1e_t) = \mathrm{Cov}(e_t, \alpha_1e_t) = \alpha_1\sigma_e^2 \quad \text{(by linearity)}\\
+    \mathrm{Cov}(x_t, x_{t+2}) &= 0\\
+    \mathrm{Cov}(x_t, x_{t+h}) &= 0
+\end{align*}
+We can conclude the autocovariance function to 
+\begin{equation*}
+    \mathrm{Cov}(x_t, x_{t+h}) = \gamma(h) = 
+    \begin{cases}
+        \alpha_1\sigma_e^2, &  h=1\\
+        0, & h >1
+    \end{cases}
+\end{equation*}
+Thus, an MA(1) is a stationary, weakly dependent sequence, and the LLN and the CLT can be applied to \( \{x_t\} \).
+
+\paragraph{Autoregressive Process of Order “1”} A more popular example is the process
+\begin{equation}
+y_t = \rho_1 y_{t-1} + \\e_t, \quad t = 1, 2, \ldots \label{eq:11.2}
+\end{equation}
+The starting point in the sequence is \( y_0 \), and \( \{ e_t \} \) is an i.i.d. sequence with zero mean and variance \( \sigma_e^2 \). Assume that \( y_0 \) is independent of the errors and that \( \mathbb{E}(y_0) = 0 \). This is called an \textbf{autoregressive process of order one (AR(1))}.
+The crucial assumption for weak dependence of an AR(1) process is the \textbf{stability condition}:
+\[
+|\rho_1| < 1.
+\]
+To see that a stable AR(1) process is asymptotically uncorrelated, assume it is covariance stationary. Then:
+\[
+\mathbb{E}(y_t) = \mathbb{E}(y_{t-1}) = \mu
+\]
+and from (\ref{eq:11.2}),
+\[
+\mathbb{E}(y_t) = \rho_1 \mathbb{E}(y_{t-1}) + \mathbb{E}(e_t)
+\Rightarrow \mu = \rho_1 \mu \Rightarrow \mu(1 - \rho_1) = 0 \Rightarrow \mu = 0.
+\]
+Now taking variance on both sides of (\ref{eq:11.2}):
+\begin{equation}
+\text{Var}(y_t) = \rho_1^2 \text{Var}(y_{t-1}) + \text{Var}(e_t)
+\Rightarrow \sigma_y^2 = \rho_1^2 \sigma_y^2 + \sigma_e^2
+\Rightarrow \sigma_y^2 = \frac{\sigma_e^2}{1 - \rho_1^2}.
+ \label{eq:11.3}
+\end{equation}
+Now compute the covariance between \( y_t \) and \( y_{t+h} \), for \( h \geq 1 \):
+\begin{align*}
+y_{t+h} &= \rho_1 y_{t+h-1} + e_{t+h} \\
+       &= \rho_1 (\rho_1 y_{t+h-2} + e_{t+h-1}) + e_{t+h} \\
+       &= \rho_1^2 y_{t+h-2} + \rho_1 e_{t+h-1} + e_{t+h} \\
+       &\;\vdots \\
+       &= \rho_1^h y_t + \rho_1^{h-1} e_{t+1} + \dots + e_{t+h}
+\end{align*}
+Because \( \mathbb{E}(y_t) = 0 \) for all \( t \), we can multiply this last equation by \( y_t \) and take expectations to obtain \( \text{Cov}(y_t, y_{t+h}) \). Using the fact that \( e_{t+j} \) is uncorrelated with \( y_t \) for all \( j \geq 1 \) gives
+\begin{align*}
+\text{Cov}(y_t, y_{t+h}) &= \mathbb{E}(y_t y_{t+h}) \\
+&= \rho_1^h \mathbb{E}(y_t^2) + \rho_1^{h-1} \mathbb{E}(y_t e_{t+1}) + \cdots + \mathbb{E}(y_t e_{t+h}) \\
+&= \rho_1^h \mathbb{E}(y_t^2) = \rho_1^h \sigma_y^2.
+\end{align*}
+Because \( \sigma_y \) is the standard deviation of both \( y_t \) and \( y_{t+h} \), and the correlation between \( y_t \) and \( y_{t+h} \) for any \( h \geq 1 \):
+\begin{equation}
+\text{Corr}(y_t, y_{t+h}) = \frac{\text{Cov}(y_t, y_{t+h})}{\sigma_y \sigma_y} = \rho_1^h.
+\label{eq:11.4}
+\end{equation}
+\( \text{Corr}(y_t, y_{t+1}) = \rho_1 \), so \( \rho_1 \) is the correlation coefficient between any two adjacent terms in the sequence.\\
+Equation (\ref{eq:11.4}) is important because it shows that, although \( y_t \) and \( y_{t+h} \) are correlated for any \( h \geq 1 \), this correlation gets very small for large \( h \): because \( |\rho_1| < 1 \), \( \rho_1^h \to 0 \) as \( h \to \infty \).
+
+\subsection{Asymptotic Properties of OLS}
+
+\begin{tcolorbox}[colback=blue!5!white, colframe=blue!80!black, title=Assumption TS.1' -- Linearity in Parameters]
+We assume the model is exactly as in Assumption TS.1, but now we add the assumption that \( \{(x_t, y_t): t = 1, 2, \ldots\} \) is \textbf{stationary} and \textbf{weakly dependent}. In particular, the LLN and the CLT can be applied to sample averages.
+\end{tcolorbox}
+The linear in parameters requirement again means that we can write the model as:
+\begin{equation}
+y_t = \beta_0 + \beta_1 x_{t1} + \dots + \beta_k x_{tk} + u_t,
+\label{eq:11.5}
+\end{equation}
+where the \( \beta_j \) are the parameters to be estimated. Unlike in Chapter 10, the \( x_{tj} \) can include lags of the dependent variable.\\
+The important extra restriction in Assumption TS.1' as compared with Assumption TS.1 is the weak dependence assumption. Technically, Assumption TS.1' requires weak dependence on multiple time series (\( y_t \) and elements of 
+\( \mathbf{x_t} \), and this entails putting restrictions on the joint distribution across time.
+\begin{tcolorbox}[colback=blue!5!white, colframe=blue!80!black, title=Assumption TS.2' -- No Perfect Collinearity]
+\textbf{Same as Assumption TS.2.} \\
+In the sample (and therefore in the underlying time series process), no independent variable is constant nor a perfect linear combination of the others.
+\end{tcolorbox}
+
+\vspace{0.5cm}
+
+\begin{tcolorbox}[colback=blue!5!white, colframe=blue!80!black, title=Assumption TS.3' -- Zero Conditional Mean]
+The explanatory variables \( \mathbf{x}_t = (x_{t1}, x_{t2}, \ldots, x_{tk}) \) are \textbf{contemporaneously exogenous}: 
+\[
+\mathbb{E}(u_t \mid \mathbf{x}_t) = 0.
+\]
+\end{tcolorbox}
+This is the most natural assumption concerning the relationship between \( u_t \) and the explanatory variables. It is much weaker than Assumption TS.3 because it puts no restrictions on how \( u_t \) is related to the explanatory variables in other time periods.
+\begin{itemize}
+    \item By stationarity, if contemporaneous exogeneity holds for one time period, it holds for them all. Relaxing stationarity would simply require us to assume the condition holds for all \( t = 1, 2, \dots \).
+    \item Consistency result only requires \( u_t \) to have zero unconditional mean and to be uncorrelated with each \( x_{tj} \):
+    \begin{equation}
+    \mathbb{E}(u_t) = \mathbb{E}[\mathbb{E}(u_t \mid \mathbf{x}_t)] = 0, \quad \text{Cov}(x_{tj}, u_t) = 0, \quad j = 1, \ldots, k.
+    \label{eq:6}
+\end{equation}
+\end{itemize}
+
+\begin{tcolorbox}[colback=blue!5!white, colframe=blue!80!black, title=Theorem 11.1 -- Consistency of OLS]
+Under TS.1', TS.2', and TS.3', the OLS estimators are consistent: 
+\[
+\text{plim } \hat{\beta}_j = \beta_j, \quad j = 0, 1, \ldots, k.
+\]
+\end{tcolorbox}
+Some key differences between Thm 10.1 and Thm 11.1:
+\begin{enumerate}
+    \item We conclude that the OLS estimators are consistent, but not necessarily unbiased.
+    \item Thm 11.1, we have weakened the sense in which the explanatory variables must be exogenous, but weak dependence is required in the underlying time series.
+\end{enumerate}
+We examine by some examples
+\begin{tcolorbox}[colback=gray!10!white, colframe=gray!40!black, title=Example 11.1 -- Static Model]
+Consider a static model with two explanatory variables:
+\[
+y_t = \beta_0 + \beta_1 x_{t1} + \beta_2 x_{t2} + u_t.
+\label{eq:7}
+\]
+Under weak dependence, the condition sufficient for consistency of OLS is:
+\[
+\mathbb{E}(u_t \mid x_{t1}, x_{t2}) = 0.
+\label{eq:8}
+\]
+This rules out omitted variables that are in \( u_t \) and are correlated with either \( x_{t1} \) or \( x_{t2} \). Also, no function of \( x_{t1} \) or \( x_{t2} \) can be correlated with \( u_t \), and so Assumption TS.3' rules out misspecified functional form.\\
+Importantly, Assumption TS.3' \textbf{does not} rule out correlation between, say, \( u_{t-1} \) and \( z_t \). If \( z_t \) is related to past \( y_{t-1} \), such as
+\begin{equation}
+z_t = \delta_0 + \delta_1 y_{t-1} + v_t.
+\label{eq:9}
+\end{equation}
+Such a mechanism generally causes \( z_t \) and \( u_{t-1} \) to be correlated (as can be seen by plugging in for \( y_{t-1} \)). This kind of feedback is allowed under Assumption TS.3'.
+\end{tcolorbox}
+
+The next example clearly violates the strict exogeneity assumption; therefore, we can only appeal to large sample properties of OLS.
+
+\begin{tcolorbox}[colback=gray!10!white, colframe=gray!40!black, title=Example 11.3 -- AR(1) Model]
+Consider the AR(1) model,
+\begin{equation}
+y_t = \beta_0 + \beta_1 y_{t-1} + u_t,
+\label{eq:11.12}
+\end{equation}
+where the error \( u_t \) has a zero expected value, given all past values of \( y \):
+\begin{equation}
+\mathbb{E}(u_t \mid y_{t-1}, y_{t-2}, \ldots ) = 0.
+\label{eq:11.13}
+\end{equation}
+
+Combined, these two equations imply that
+\begin{equation}
+\mathbb{E}(y_t \mid y_{t-1}, y_{t-2}, \ldots ) = \mathbb{E}(y_t \mid y_{t-1}) = \beta_0 + \beta_1 y_{t-1}.
+\label{eq:11.14}
+\end{equation}
+This result is very important.
+\begin{enumerate}
+    \item It means that, once \( y_{t-1} \) has been controlled for, no further lags of \( y \) affect the expected value of \( y_t \).
+    \item The relationship is assumed to be linear.
+\end{enumerate}
+Because \( \mathbf{x_t} \) contains only \( y_{t-1} \), equation (\ref{eq:11.13}) implies that Assumption TS.3' holds. By contrast, the strict exogeneity assumption needed for unbiasedness, Assumption TS.3, does not hold.
+In fact, because \( u_t \) is uncorrelated with \( y_{t-1} \), under (\ref{eq:11.13}), \( u_{t} \) and \( y_t \) must be correlated. 
+In fact, it is easily seen that \( \text{Cov}(y_t, u_{t}) = \text{Var}(u_{t}) > 0 \). Therefore, a model with a lagged dependent variable cannot satisfy the strict exogeneity Assumption TS.3.
+\end{tcolorbox}
+For the weak dependence condition to hold, we must assume that \( |\beta_1| < 1 \). If this condition holds, then Theorem 11.1 implies that the OLS estimator from the regression of \( y_t \) on \( y_{t-1} \) produces consistent estimators of \( \beta_0 \) and \( \beta_1 \).
+
+\begin{tcolorbox}[colback=blue!5!white, colframe=blue!80!black, title=Assumption TS.4' -- Homoskedasticity]
+The errors are \textbf{contemporaneously homoskedastic}, that is, \( \text{Var}(u_t \mid \mathbf{x}_t) = \sigma^2 \).
+\end{tcolorbox}
+
+\vspace{0.5cm}
+
+\begin{tcolorbox}[colback=blue!5!white, colframe=blue!80!black, title=Assumption TS.5' -- No Serial Correlation]
+For all \( t \ne s \), 
+\[
+\mathbb{E}(u_t u_s \mid \mathbf{x}_t, \mathbf{x}_s) = 0.
+\]
+\end{tcolorbox}
+In TS.4', note how we condition only on the explanatory variables at time \( t \) . In TS.5', we condition only on the explanatory variables in the time periods coinciding with \( u_t \) and \( u_s \).\\
+Assumption TS.5' \textbf{does} hold in the AR(1) model stated in equations (11.12) and (11.13). Because the explanatory variable at time \( t \) is \( y_{t-1} \), we must show that
+\[
+\mathbb{E}(u_t u_s \mid y_{t-1}, y_{t-2}, \ldots ) = 0 \quad \text{for all } t \ne s.
+\]
+Suppose that \( s < t \). (The other case follows by symmetry.)
+Then, because
+\[
+u_s = y_s - \beta_0 - \beta_1 y_{s-1},
+\]
+it follows that \( u_s \) is a function of \( y \) dated before time \( t \). But by (\ref{eq:11.13}),
+\[
+\mathbb{E}(u_t \mid u_s, y_{t-1}, y_{s-1}) = 0.
+\]
+Therefore,
+\[
+\mathbb{E}(u_t u_s \mid u_s, y_{t-1}, y_{s-1}) = u_s \, \mathbb{E}(u_t \mid y_{t-1}, y_{s-1}) = 0.
+\]
+
+By the law of iterated expectations,
+\[
+\mathbb{E}(u_t u_s \mid y_{t-1}, y_{s-1}) = 0.
+\]
+
+This is a very important result: as long as only one lag appears in the model (\ref{eq:11.12}), the errors must be serially uncorrelated.
+\begin{tcolorbox}[colback=blue!5!white, colframe=blue!80!black, title=Theorem 11.2 -- Asymptotic Normality of OLS]
+Under TS.1' through TS.5', the OLS estimators are asymptotically normally distributed. Further, the usual OLS standard errors, \( t \) statistics, \( F \) statistics, and LM statistics are asymptotically valid.
+\end{tcolorbox}
+Even if the classical linear model assumptions do not hold, OLS is still consistent, and the standard inference procedures are valid.
+
+\subsection{Using Highly Persistent Time Series in Regression Analysis}
+We provide some examples of \textbf{highly persistent} (or \textbf{strongly dependent}) time series and show how they can be transformed for use in regression analysis.
+\subsubsection{Highly Persistent Time Series}
+In the simple AR(1) model (\ref{eq:11.2}), the assumption \( |\rho_1| < 1 \) is crucial for the series to be weakly dependent. However, AR(1) model with \( \rho_1 = 1 \), in this case we write
+\begin{equation}
+y_t = y_{t-1} + e_t, \quad t = 1, 2, \ldots
+\label{eq:11.20}
+\end{equation}
+where we assume that \( \{ e_t : t = 1, 2, \ldots \} \) is independent and identically distributed with mean zero and variance \( \sigma_e^2 \) also the initial value \( y_0 \) is independent of \( e_t \) for all \( t \ge 1 \).\\
+Eq.~(\ref{eq:11.20}) is called a \textbf{random walk}. The fact that \( y_t \) at time \( t \) is obtained by starting at the previous value, \( y_{t-1} \), and adding a zero mean random variable that is independent of \( y_{t-1} \).
+
+We find the expected value of \( y_t \). This is most easily done by using repeated substitution to get:
+\[
+y_t = e_t + e_{t-1} + \cdots + e_1 + y_0 = y_0 + \sum_{i=1}^t e_i.
+\]
+Taking the expected value of both sides gives:
+\begin{align*}
+    \mathbb{E}(y_t) &= \mathbb{E}(e_t) + \mathbb{E}(e_{t-1}) + \cdots + \mathbb{E}(e_1) + \mathbb{E}(y_0) \\
+    &= \mathbb{E}(y_0), \quad \text{for all } t \ge 1.
+\end{align*}
+The expected value of a random walk \textit{does not depend on } \( t \).
+A popular assumption is that $y_0 = 0$--the process begins at zero at time zero--in which case, $\mathbb{E}(y_t) = 0\ \forall t$.\\
+The variance of a random walk does change with \( t \). Assuming \( e_t \) is iid with variance \( \sigma^2 \) and $y_0$ is nonrandom so that $\mathrm{Var}(y_0) = 0$, we have:
+\begin{align*}
+    \text{Var}(y_t) &= \text{Var}(e_t) + \text{Var}(e_{t-1}) + \cdots + \text{Var}(e_1) + \mathrm{Var}(y_0)\\ 
+    &= \mathrm{Var}\left(y_0 + \sum_{i=1}^t e_i\right)\\
+    &= t \sigma_e^2.
+    \label{eq:11.21}
+\end{align*}
+In other words, the variance of a random walk increases as a linear function of time. This shows that the process \textbf{cannot be stationary}.\\
+A random walk displays highly persistent behavior in the sense that the value of \( y_0 \) today is important for determining the value of \( y_t \) in the very distant future. We write for $h$ periods hence, 
+\[
+y_{t+h} = e_{t+h} + e_{t+h-1} + \cdots + e_{t+1} + y_t = \sum_{i=t+1}^h e_{i} + y_t.
+\]
+We check the variance first
+\begin{align*}
+    \text{Var}(y_{t+h}) &= \text{Var}(e_{t+h}) + \text{Var}(e_{t+h-1}) + \cdots + \text{Var}(e_t) + \mathrm{Var}(y_t)\\ 
+    &= \mathrm{Var}\left(y_t + \sum_{i=t+1}^{t+h} e_i\right)\\
+    &= \mathrm{Var}\left(y_0 + \sum_{i=1}^t e_i + \sum_{i=t+1}^{t+h} e_i\right)\\
+    &= (t+h) \sigma_e^2.
+\end{align*}
+and see the covariance between $y_t, y_{t+h}$
+\begin{equation*}
+    \mathrm{Cov}(y_t, y_{t+h}) = \mathrm{Cov}\left(y_0 + \sum_{i=1}^t e_i,\ y_0 + \sum_{i=1}^t e_i + \sum_{i=t+1}^{t+h} e_i)\right) = t\sigma_e^2.
+\end{equation*}
+also the correlation is
+\begin{equation*}
+    \mathrm{Corr}(y_t,\ y_{t+h}) = \frac{ \mathrm{Cov}(y_t, y_{t+h})}{\sqrt{\mathrm{Var}(y_t)}\sqrt{\mathrm{Var}(y_{t+h})}} = \frac{t\sigma_e^2}{\sqrt{t\sigma_e^2}\sqrt{(t+h)\sigma_e^2}} = \sqrt{\frac{t}{(t+h)}}
+\end{equation*}
+\begin{remark}.
+    \begin{itemize}
+        \item A random walk is a special case of what is known as a \textbf{unit root process}.
+        \item A more general class of unit root processes is generated as in (\ref{eq:11.20}), but \( \{e_t\} \) is now allowed to be a general, weakly dependent series.
+        \item When \( \{e_t\} \) is not an i.i.d. sequence, the properties of the random walk we derived earlier no longer hold.
+        \item Key feature of \( \{y_t\} \) is preserved: the value of \( y \) today is highly correlated with \( y \) even in the distant future.
+        \item It is often important to know whether an economic time series is highly persistent or not.
+    \end{itemize}
+\end{remark}
+It is extremely important not to confuse trending and highly persistent behaviors. A series can be trending but not highly persistent. It is often the case that a highly persistent series also contains a clear trend. One model that leads to this behavior is the \textbf{random walk with drift}:
+\begin{equation}
+    y_t = \alpha_0 + y_{t-1} + e_t, \quad t = 1, 2, \dots \label{eq:11.23}
+\end{equation}
+where \( \{e_t: t = 1, 2, \dots \} \) and \( y_0 \) satisfy the same properties as in the random walk model. The parameter \( \alpha_0 \), which is called the \textit{drift term}. Generating \( y_t \) the constant \( \alpha_0 \) is added along with the random noise \( e_t \) to the previous value \( y_{t-1} \).
+\[
+y_t = \alpha_0 t + e_t + e_{t-1} + \cdots + e_1 + y_0.
+\]
+Therefore, if \( y_0 = 0 \), \( \text{E}(y_t) = \alpha_0 t \): the expected value of \( y_t \) is growing over time if \( \alpha_0 > 0 \) and shrinking over time if \( \alpha_0 < 0 \).
+\begin{align*}
+    \mathbb{E}(y_t) &= \mathbb{E}(y_0) + t\alpha_0\\
+    \mathrm{Var}(y_t) &= t\sigma_e^2\\
+    \mathrm{Cov}(y_t, y_{t_h}) &= t\sigma^2
+\end{align*}
+\paragraph{Remarks on Forecasts} Let $\Omega_t$ be the information set at time t, then
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.8}
+\begin{tabular}{|p{3.5cm}|p{9cm}|}
+\hline
+\textbf{Model} & \textbf{Forecast: } \( \mathbb{E}[y_{t+h} \mid \Omega_t] \) with Derivation \\ \hline
+
+\textbf{AR(1)} 
+\[
+y_t = \alpha_0 + \rho y_{t-1} + \varepsilon_t
+\] 
+& 
+\[
+\mathbb{E}[y_{t+h} \mid \Omega_t] = \rho^h y_t + \alpha_0 \sum_{j=0}^{h-1} \rho^j = \rho^h y_t + \alpha_0 \cdot \frac{1 - \rho^h}{1 - \rho}
+\]
+\[
+\text{As } h \to \infty, \quad \rho^h \to 0 \Rightarrow \mathbb{E}[y_{t+h}\mid \Omega_t] \to \frac{\alpha_0}{1 - \rho} = \mathbb{E}(y_t)
+\]
+\\ \hline
+
+\textbf{MA(1)} 
+\[
+y_t = \varepsilon_t + \beta_1 \varepsilon_{t-1}
+\] 
+& 
+\[
+\begin{cases}
+\mathbb{E}[y_{t+1} \mid \Omega_t] = \beta_1 \varepsilon_t & \text{(since } \varepsilon_t \text{ is known)} \\
+\mathbb{E}[y_{t+h} \mid \Omega_t] = 0, & h > 1 \ (\text{all terms are future shocks})
+\end{cases}
+\]
+\\ \hline
+\textbf{RandomWalk (RW)} 
+\[
+y_t = y_{t-1} + \varepsilon_t
+\] 
+& 
+\[
+y_{t+h} = y_t + \sum_{j=1}^h \varepsilon_{t+j} \Rightarrow \mathbb{E}[y_{t+h} \mid \Omega_t] = y_t
+\]
+\[
+\text{(since all future shocks have mean 0)}
+\]
+\\ \hline
+
+\textbf{RW with Drift} 
+\[
+y_t = \alpha + y_{t-1} + \varepsilon_t
+\] 
+& 
+\[
+y_{t+h} = y_t + h\alpha + \sum_{j=1}^h \varepsilon_{t+j}
+\Rightarrow \mathbb{E}[y_{t+h} \mid \Omega_t] = y_t + h\alpha
+\]
+\[
+\text{(drift accumulates linearly over time)}
+\]
+\\ \hline
+\end{tabular}
+\end{table}
+
+\subsubsection{Transformations on Highly Persistent Time Series}
+Weakly dependent processes are said to be \textbf{integrated of order zero}, or I(0) which means averages of such sequences already satisfy the standard limit theorems. Unit root processes, such as a random walk (with or without drift), are said to be \textbf{integrated of order one}, or I(1) whereas this means that the \textit{first difference} of the process is weakly dependent (and often stationary). A time series that is I(1) is often said to be a \textit{difference-stationary process}.
+an I(1) process is easiest to see for a random walk. With \( \{y_t\} \) generated as in (11.20) for \( t = 1, 2, \ldots \),
+\begin{equation}
+    \Delta y_t = y_t - y_{t-1} = e_t, \quad t = 2, 3, \ldots \label{eq:11.24}
+\end{equation}
+therefore, the first-differenced series \( \{\Delta y_t: t = 2, 3, \ldots\} \) is actually an i.i.d. sequence. More generally, if \( \{y_t\} \) is generated by (\ref{eq:11.24}) where \( \{e_t\} \) is any weakly dependent process, then \( \{\Delta y_t\} \) is weakly dependent.
+\begin{remark}
+    In actual data sets, if an original variable is named \( y \), then its change or difference is often denoted \texttt{cy} or \texttt{dy}. For example, the change in \textit{price} might be denoted \texttt{cprice}.)
+\end{remark}
+Many time series \( y_t \) that are strictly positive are such that \( \log(y_t) \) is integrated of order one. We can use the first difference in the logs, \( \Delta \log(y_t) = \log(y_t) - \log(y_{t-1}) \), in regression analysis. Because
+\begin{equation}
+    \Delta \log(y_t) \approx \frac{(y_t - y_{t-1})}{y_{t-1}}, \label{eq:11.25}
+\end{equation}
+Differencing time series before using them in regression analysis has another benefit: it removes any linear time trend. This is easily seen by writing a linearly trending variable as
+\[
+y_t = \gamma_0 + \gamma_1 t + v_t,
+\]
+where \( v_t \) has a zero mean. Then, \( \Delta y_t = \gamma_1 + \Delta v_t \), and so \( \mathbb{E}(\Delta y_t) = \gamma_1 + \mathbb{E}(\Delta v_t) = \gamma_1 \). In other words, \( \mathbb{E}(\Delta y_t) \) is constant. The same argument works for \( \Delta \log(y_t) \) when \( \log(y_t) \) follows a linear time trend.
+
+\subsubsection{Deciding Whether a Time Series Is I(1)}
+A very simple tool is motivated by the AR(1) model: if \( |\rho_1| < 1 \), then the process is I(0), but it is I(1) if \( \rho_1 = 1 \). When the AR(1) process is stable, \( \rho_1 = \text{Corr}(y_t, y_{t-1}) \). This sample correlation coefficient is called the \textbf{first order autocorrelation} of \( \{y_t\} \); we denote this by \( \hat{\rho}_1 \). By applying the LLN, \( \hat{\rho}_1 \) can be shown to be consistent for \( \rho_1 \) \textit{provided} \( |\rho_1| < 1 \).
+
+\newpage
+\section{Serial Correlation and Heteroskedasticity in Time Series Regressions}
+\setcounter{equation}{0}
+\setcounter{theorem}{0}
+\setcounter{assumption}{0}
+
+\subsection{Properties of OLS with Serially Correlated Errors}
+
+\subsubsection{Unbiasedness and Consistency of OLS with Serially Correlated Errors}
+\begin{itemize}
+    \item \textbf{Unbiasedness:} OLS estimators (\(\hat{\beta}_j\)) remain unbiased if the regressors are strictly exogenous (Assumption TS.3: \(E(u_t|X)=0\)). This holds regardless of serial correlation in errors.
+    \item \textbf{Consistency:} OLS estimators remain consistent under weaker contemporaneous exogeneity assumptions (e.g., \(E(u_t|x_t)=0\)) and weak dependence of the time series, again, irrespective of serial correlation in errors.
+\end{itemize}
+
+\subsubsection{Efficiency and Inference}
+\begin{itemize}
+    \item \textbf{Efficiency:} OLS is \textbf{no longer BLUE} (Best Linear Unbiased Estimator) in the presence of serial correlation, as Assumption TS.5 (no serial correlation, homoskedasticity) is violated.
+    \item \textbf{Inference:} Usual OLS standard errors, t-statistics, and F-statistics are \textbf{not valid} (even asymptotically).
+\end{itemize}
+
+\paragraph{Derivation of \(Var(\hat{\beta}_1)\) in Simple Regression with AR(1) Errors}
+Model: \(y_t = \beta_0 + \beta_1 x_t + u_t\), with \(u_t = \rho u_{t-1} + e_t\), \(|\rho|<1\).
+Let \(Var(u_t) = \sigma^2\) and \(Cov(u_t, u_{t+j}) = \rho^j \sigma^2\). Assume \(\bar{x}=0\).
+The OLS estimator \(\hat{\beta}_1 = \beta_1 + (\sum x_t u_t) / SST_x\).
+The variance of \(\hat{\beta}_1\) is:
+\begin{align*}
+Var(\hat{\beta}_1 \mid X) &= \frac{1}{SST_x^2} Var\left(\sum_{t=1}^n x_t u_t \Bigg| X\right) \\
+&= \frac{1}{SST_x^2} \left( \sum_{t=1}^n x_t^2 Var(u_t) + 2 \sum_{t=1}^{n-1} \sum_{j=1}^{n-t} x_t x_{t+j} Cov(u_t, u_{t+j}) \right) \\
+&= \frac{\sigma^2 \sum x_t^2}{SST_x^2} + \frac{2\sigma^2}{SST_x^2} \sum_{t=1}^{n-1} \sum_{j=1}^{n-t} \rho^j x_t x_{t+j} \\
+Var(\hat{\beta}_1 \mid X) &= \frac{\sigma^2}{SST_x} + \frac{2\sigma^2}{SST_x^2} \sum_{t=1}^{n-1} \sum_{j=1}^{n-t} \rho^j x_t x_{t+j} \quad \text{[Eq. 12.4 adapted]}
+\end{align*}
+The first term is the usual OLS variance. The second term is non-zero if \(\rho \neq 0\).
+\begin{itemize}
+    \item If \(\rho > 0\) and \(x_t\) are positively serially correlated (common), the second term is positive.
+    \item \textbf{Result:} The usual OLS variance formula (\(\sigma^2/SST_x\)) typically \textit{understates} the true variance. OLS standard errors are too small, and t-statistics are too large.
+\end{itemize}
+
+\subsubsection{Goodness of Fit (\(R^2\) and \(\bar{R}^2\))}
+\begin{itemize}
+    \item \(R^2\) and \(\bar{R}^2\) remain \textbf{consistent estimators} of the population R-squared if the data are stationary and weakly dependent.
+    \item This is analogous to the cross-sectional case with heteroskedasticity.
+    \item Not meaningful for I(1) (non-stationary) processes.
+\end{itemize}
+
+\subsubsection{Serial Correlation in the Presence of Lagged Dependent Variables}
+The statement ``OLS is inconsistent with lagged DVs and serially correlated errors'' is nuanced.
+\begin{itemize}
+    \item \textbf{Case 1: OLS is Consistent.}
+    If \(y_t = \beta_0 + \beta_1 y_{t-1} + u_t\) and by construction \(E(u_t \mid y_{t-1}, y_{t-2}, \dots) = 0\).
+    \begin{itemize}
+        \item OLS is consistent for \(\beta_0, \beta_1\).
+        \item However, \(u_t\) can still be serially correlated (e.g., if \(u_t\) is correlated with \(y_{t-2}\), it will be correlated with \(u_{t-1}\)). Standard errors will be invalid.
+    \end{itemize}
+    \item \textbf{Case 2: OLS is Inconsistent due to Misspecification.}
+    If we specify \(y_t = \beta_0 + \beta_1 y_{t-1} + u_t\) AND assume \(u_t = \rho u_{t-1} + e_t\) where \(e_t\) is an innovation uncorrelated with past \(y\)'s.
+    \begin{itemize}
+        \item Then \(y_{t-1}\) is correlated with \(u_t\) (because \(y_{t-1}\) is related to \(u_{t-1}\), and \(u_t\) depends on \(u_{t-1}\)). Specifically, \(Cov(y_{t-1}, u_t) = \rho Cov(y_{t-1}, u_{t-1}) \neq 0\).
+        \item This renders OLS inconsistent for estimating \(\beta_0, \beta_1\) in the original equation.
+        \item \textbf{The true underlying model is likely misspecified.} Combining these equations shows \(y_t\) follows an AR(2) process:
+        \[ y_t = \alpha_0 + \alpha_1 y_{t-1} + \alpha_2 y_{t-2} + e_t \]
+        OLS estimation of this correctly specified AR(2) model is consistent, and its error \(e_t\) is serially uncorrelated.
+    \end{itemize}
+    \item \textbf{Bottom Line:} Serial correlation in errors of a dynamic model often implies the dynamic specification of the conditional mean is incomplete. The usual remedy is to include more lags of variables in the model rather than trying to ``correct'' for serial correlation in a misspecified dynamic model.
+\end{itemize}
+
+\subsection{Serial Correlation–Robust Inference after OLS}
+
+\begin{itemize}
+    \item OLS estimators remain consistent under serial correlation (with appropriate exogeneity), but usual OLS standard errors and test statistics are invalid.
+    \item This section details how to compute standard errors robust to serial correlation (and heteroskedasticity), often called HAC (Heteroskedasticity and Autocorrelation Consistent) standard errors.
+\end{itemize}
+
+\subsubsection{General Approach and The Newey-West Estimator}
+Consider the model: \( y_t = \beta_0 + \beta_1 x_{t1} + \dots + \beta_k x_{tk} + u_t \).
+We want a robust standard error for, say, \(\hat{\beta}_1\).
+
+\paragraph{Asymptotic Variance of \(\hat{\beta}_1\)}
+Let \(r_t\) be the (population) error from regressing \(x_{t1}\) on other \(x\)'s. The asymptotic variance of \(\hat{\beta}_1\) is related to \(Var(\sum_{t=1}^n r_t u_t)\).
+Let \(a_t = r_t u_t\). The Newey-West method estimates \(Var(\sum a_t)\).
+
+\paragraph{Procedure for SC-Robust Standard Error for \(\hat{\beta}_1\)}
+\begin{enumerate}
+    \item \textbf{Initial OLS:} Estimate the main model \(y_t\) on \(x_{t1}, \dots, x_{tk}\) by OLS. Obtain:
+    \begin{itemize}
+        \item The OLS estimate \(\hat{\beta}_1\).
+        \item The usual (potentially incorrect) OLS standard error: ``se\((\hat{\beta}_1)_{OLS}\)''.
+        \item The standard error of the regression: \(\hat{\sigma}\).
+        \item The OLS residuals: \(\hat{u}_t\) for \(t=1, \dots, n\).
+    \end{itemize}
+    \item \textbf{Auxiliary Regression Residuals:} Regress \(x_{t1}\) on an intercept and \(x_{t2}, \dots, x_{tk}\). Obtain the residuals \(\hat{r}_t\).
+    \begin{equation} \label{eq:aux_reg_robust}
+    x_{t1} = \delta_0 + \delta_2 x_{t2} + \dots + \delta_k x_{tk} + r_t
+    \end{equation}
+    \item \textbf{Form \(\hat{a}_t\):} For each \(t\), calculate \(\hat{a}_t = \hat{r}_t \hat{u}_t\).
+    \item \textbf{Compute \(\hat{n}\):} For a chosen truncation lag \(g > 0\), compute the Newey-West estimator for \(Var(\sum a_t)\):
+    \begin{equation} \label{eq:n_hat_newey_west}
+    \hat{n} = \sum_{t=1}^n \hat{a}_t^2 + 2 \sum_{h=1}^g \left(1 - \frac{h}{g+1}\right) \sum_{t=h+1}^n \hat{a}_t \hat{a}_{t-h}
+    \end{equation}
+    The term \((1 - \frac{h}{g+1})\) is the Bartlett kernel weight.
+    \item \textbf{Compute SC-Robust (HAC) Standard Error for \(\hat{\beta}_1\):}
+    \begin{equation} \label{eq:se_robust_beta1}
+    se(\hat{\beta}_1)_{HAC} = \left[ \frac{\text{se}(\hat{\beta}_1)_{OLS}}{\hat{\sigma}} \right]^2 \sqrt{\hat{n}}
+    \end{equation}
+    Alternatively, this is equivalent to \( se(\hat{\beta}_1)_{HAC} = \frac{\sqrt{\hat{n}}}{\sum \hat{r}_t^2} \).
+\end{enumerate}
+
+\subsubsection{Choosing the Truncation Lag \(g\)}
+\begin{itemize}
+    \item \(g\) controls the number of autocovariances included.
+    \item Theory suggests \(g\) should grow with sample size \(n\), but at a slower rate (e.g., \(g \propto n^{1/4}\) or \(n^{1/3}\)).
+    \item Practical rules of thumb exist (e.g., EViews default \(g \approx 4(n/100)^{2/9}\); Stock \& Watson \(g \approx (3/4)n^{1/3}\)).
+    \item Generally, small \(g\) (1 or 2) for annual data, larger for quarterly (e.g., 4, 8) or monthly (e.g., 12, 24) data, if \(n\) is sufficient.
+    \item Results can be sensitive to the choice of \(g\).
+\end{itemize}
+
+\subsubsection{Properties and Use of HAC Standard Errors}
+\begin{itemize}
+    \item Robust to general forms of serial correlation (up to lag \(g\)) and heteroskedasticity.
+    \item Typically larger than OLS SEs if errors are positively serially correlated.
+    \item Can have poor performance in small samples if serial correlation is strong.
+    \item Useful when strict exogeneity (for GLS) is doubtful, as OLS consistency is less demanding.
+\end{itemize}
+
+\subsubsection{Kiefer and Vogelsang (2005) Alternative}
+\begin{itemize}
+    \item Proposes using a fixed fraction of the sample size for \(g\), e.g., \(g = n-1\).
+    \item The resulting t-statistic does not follow a standard normal distribution asymptotically.
+    \item They provide alternative critical values, avoiding the need to select \(g\) based on growth rates relative to \(n\).
+\end{itemize}
+
+\subsubsection{SC-Robust F-statistics}
+\begin{itemize}
+    \item Possible to construct for multiple hypothesis tests, but more advanced.
+\end{itemize}
+
+\subsection{Testing for Serial Correlation}
+\begin{itemize}
+    \item To inform the choice of appropriate standard errors (OLS vs. HAC).
+    \item To decide if more efficient estimators like Feasible GLS (FGLS) are warranted (if strict exogeneity holds).
+    \item As a model diagnostic, especially for dynamic models (potential for missing lags).
+\end{itemize}
+
+\subsubsection{A t-Test for AR(1) Serial Correlation with Strictly Exogenous Regressors}
+Tests \(H_0: \rho = 0\) in \(u_t = \rho u_{t-1} + e_t\).
+\begin{enumerate}
+    \item Run OLS on \(y_t = \beta_0 + \beta_1 x_{t1} + \dots + \beta_k x_{tk} + u_t\) to get residuals \(\hat{u}_t\).
+    \item Run the auxiliary regression for \(t=2, \dots, n\):
+    \begin{equation} \label{eq:aux_reg_ar1_strict}
+    \hat{u}_t = \hat{\rho} \hat{u}_{t-1} + \text{error}_t
+    \end{equation}
+    (May include an intercept).
+    \item Use the t-statistic for \(\hat{\rho}\), \(t_{\hat{\rho}}\), to test \(H_0\).
+\end{enumerate}
+\textbf{Validity:} Asymptotically valid if original regressors \(x_{tj}\) are strictly exogenous and innovations \(e_t\) in the AR(1) process for \(u_t\) are homoskedastic. Can be made robust to heteroskedastic \(e_t\) using robust SE for \(\hat{\rho}\).
+
+\subsubsection{The Durbin-Watson (DW) Test under Classical Assumptions}
+Also tests \(H_0: \rho=0\) in an AR(1) model for errors.
+\begin{itemize}
+    \item Statistic: \( DW = \frac{\sum_{t=2}^n (\hat{u}_t - \hat{u}_{t-1})^2}{\sum_{t=1}^n \hat{u}_t^2} \).
+    \item Approximation: \( DW \approx 2(1 - \hat{\rho}) \), where \(\hat{\rho}\) is from Eq. \eqref{eq:aux_reg_ar1_strict}.
+    \item \textbf{Derivation of Approximation:}
+    \begin{align*}
+    DW &= \frac{\sum (\hat{u}_t^2 - 2\hat{u}_t \hat{u}_{t-1} + \hat{u}_{t-1}^2)}{\sum \hat{u}_t^2} \\
+    &\approx \frac{\sum \hat{u}_t^2 - 2\sum \hat{u}_t \hat{u}_{t-1} + \sum \hat{u}_t^2}{\sum \hat{u}_t^2} \quad (\text{since } \sum \hat{u}_{t-1}^2 \approx \sum \hat{u}_t^2) \\
+    &= 2 - 2 \frac{\sum \hat{u}_t \hat{u}_{t-1}}{\sum \hat{u}_t^2} \approx 2(1 - \hat{\rho})
+    \end{align*}
+    \item Decision involves comparing DW to upper (\(d_U\)) and lower (\(d_L\)) critical value bounds. Test can be inconclusive.
+    \item \textbf{Limitations:} Requires full CLM assumptions (including normality, strict exogeneity); inconclusive region; primarily for AR(1). Generally less preferred than the t-test.
+\end{itemize}
+
+\subsubsection{Testing for AR(1) Serial Correlation without Strictly Exogenous Regressors}
+Crucial when regressors (e.g., lagged dependent variables) might be correlated with past errors.
+\begin{enumerate}
+    \item Run OLS on the main model to get residuals \(\hat{u}_t\).
+    \item Run the auxiliary regression for \(t=2, \dots, n\):
+    \begin{equation} \label{eq:aux_reg_ar1_general}
+    \hat{u}_t = \gamma_0 + \rho \hat{u}_{t-1} + \gamma_1 x_{t1} + \dots + \gamma_k x_{tk} + \text{error}_t
+    \end{equation}
+    (Includes original regressors \(x_{tj}\) from the main model).
+    \item Use the t-statistic for \(\hat{\rho}\) from this regression to test \(H_0: \rho=0\).
+\end{enumerate}
+\textbf{Validity:} Asymptotically valid even if regressors are not strictly exogenous. Including \(x_{tj}\) controls for their potential correlation with \(\hat{u}_{t-1}\). Assumes homoskedasticity of innovations \(e_t\); can use robust SE for \(\hat{\rho}\).
+
+\subsubsection{Testing for Higher-Order Serial Correlation (e.g., AR(q))}
+Tests \(H_0: \rho_1 = \dots = \rho_q = 0\) in \(u_t = \rho_1 u_{t-1} + \dots + \rho_q u_{t-q} + e_t\).
+\begin{enumerate}
+    \item Run OLS on the main model to get residuals \(\hat{u}_t\).
+    \item Run the auxiliary regression for \(t=q+1, \dots, n\):
+    \begin{equation} \label{eq:aux_reg_arq_general}
+    \hat{u}_t = \gamma_0 + \rho_1 \hat{u}_{t-1} + \dots + \rho_q \hat{u}_{t-q} + \gamma_1 x_{t1} + \dots + \gamma_k x_{tk} + \text{error}_t
+    \end{equation}
+    \item \textbf{F-test version:} Compute F-statistic for joint significance of \(\hat{u}_{t-1}, \dots, \hat{u}_{t-q}\). Compare to \(F_{q, n-(k+1)-q}\).
+    \item \textbf{LM-test version (Breusch-Godfrey):} Calculate \(LM = (n-q) R_{\hat{u}}^2\), where \(R_{\hat{u}}^2\) is from Eq. \eqref{eq:aux_reg_arq_general}. Under \(H_0\), \(LM \sim \chi_q^2\).
+\end{enumerate}
+\textbf{Validity:} Valid with or without strict exogeneity of original \(x_{tj}\) (if included in auxiliary). Assumes homoskedastic \(e_t\); robust versions exist. If \(x_{tj}\) are strictly exogenous, they can be omitted from Eq. \eqref{eq:aux_reg_arq_general}.
+
+\subsubsection{Testing for Seasonal Serial Correlation}
+\begin{itemize}
+    \item For data with seasonality (e.g., quarterly, monthly), test for correlation at seasonal lags.
+    \item Example: For \(u_t = \rho_s u_{t-s} + e_t\) (e.g., \(s=4\) for quarterly data), regress \(\hat{u}_t\) on \(\hat{u}_{t-s}\) (and \(x_{tj}\) if not strictly exogenous). Use t-statistic on coefficient of \(\hat{u}_{t-s}\).
+\end{itemize}
+
+\subsection{Correcting for Serial Correlation with Strictly Exogenous Regressors}
+
+\subsubsection{Motivation and Pre-requisites}
+\begin{itemize}
+    \item \textbf{Goal:} Obtain more efficient estimators than OLS when errors are serially correlated, if OLS with HAC standard errors yields imprecise estimates.
+    \item \textbf{Crucial Requirement:} Explanatory variables (\(X\)) must be \textbf{strictly exogenous} (error \(u_t\) uncorrelated with \(X\) in all time periods). Not suitable for models with lagged dependent variables.
+\end{itemize}
+
+\subsubsection{Obtaining BLUE in AR(1) Model (Known \(\rho\))}
+Assume errors \(u_t\) follow \(u_t = \rho u_{t-1} + e_t\), with \(|\rho|<1\), and \(e_t\) are serially uncorrelated innovations with \(Var(e_t)=\sigma_e^2\).
+Original model: \(y_t = \beta_0 + X_t\boldsymbol{\beta} + u_t\).
+
+\paragraph{Transformation for \(t \ge 2\)}
+Subtracting \(\rho \times (\text{equation at } t-1)\) from \((\text{equation at } t)\) yields:
+\[ (y_t - \rho y_{t-1}) = (1-\rho)\beta_0 + (X_t - \rho X_{t-1})\boldsymbol{\beta} + (u_t - \rho u_{t-1}) \]
+Let \(\tilde{y}_t = y_t - \rho y_{t-1}\) and \(\tilde{X}_t = X_t - \rho X_{t-1}\) (quasi-differenced data).
+The transformed equation is:
+\begin{equation} \label{eq:quasi_diff_known_rho}
+\tilde{y}_t = (1-\rho)\beta_0 + \tilde{X}_t\boldsymbol{\beta} + e_t, \quad \text{for } t=2, \dots, n
+\end{equation}
+The error \(e_t\) is serially uncorrelated with variance \(\sigma_e^2\).
+
+\paragraph{Transformation for \(t=1\) (Prais-Winsten)}
+The original error \(u_1\) has \(Var(u_1) = \sigma_e^2 / (1-\rho^2)\). To make its variance \(\sigma_e^2\), multiply the \(t=1\) equation by \(\sqrt{1-\rho^2}\):
+\[ \sqrt{1-\rho^2} y_1 = \sqrt{1-\rho^2} \beta_0 + (\sqrt{1-\rho^2} X_1)\boldsymbol{\beta} + \sqrt{1-\rho^2} u_1 \]
+Let \(\tilde{y}_1 = \sqrt{1-\rho^2} y_1\), \(\tilde{X}_1 = \sqrt{1-\rho^2} X_1\). The transformed error \(\sqrt{1-\rho^2} u_1\) has variance \(\sigma_e^2\).
+\textbf{GLS Estimator:} OLS on the system of \(n\) transformed equations (Prais-Winsten for \(t=1\), quasi-difference for \(t \ge 2\)) is BLUE if \(\rho\) is known.
+
+\subsubsection{Feasible GLS (FGLS) Estimation with AR(1) Errors}
+Since \(\rho\) is unknown:
+\begin{enumerate}
+    \item Estimate main model by OLS, get residuals \(\hat{u}_t\).
+    \item Estimate \(\rho\) by regressing \(\hat{u}_t\) on \(\hat{u}_{t-1}\) to get \(\hat{\rho}\).
+    \item Transform data using \(\hat{\rho}\) (Prais-Winsten for \(t=1\), quasi-difference for \(t \ge 2\)).
+    \item Run OLS on the transformed data. The resulting \(\hat{\boldsymbol{\beta}}_{FGLS}\) are FGLS estimators.
+    \begin{equation} \label{eq:fgls_transformed_eq}
+    \tilde{y}_t(\hat{\rho}) = \beta_0 \tilde{x}_{t0}(\hat{\rho}) + \tilde{X}_t(\hat{\rho})\boldsymbol{\beta} + \text{error}_t
+    \end{equation}
+    (where \(\tilde{x}_{t0}\) is the appropriately transformed intercept term).
+    \item Inference (t-stats, F-stats) from this final OLS is asymptotically valid.
+\end{enumerate}
+\textbf{Iterative Prais-Winsten/Cochrane-Orcutt:} Repeat steps 2-4 until \(\hat{\rho}\) converges. Asymptotically, one iteration is often enough.
+
+\subsubsection{Comparing OLS and FGLS}
+\begin{itemize}
+    \item OLS consistency requires \(Cov(X_t, u_t)=0\).
+    \item FGLS consistency additionally requires (effectively) that \(u_t\) is uncorrelated with \(X_{t-1}\) and \(X_{t+1}\).
+    \item \textbf{Derivation of \(E[(X_t - \rho X_{t-1})(u_t - \rho u_{t-1})] = 0\):}
+    This requires \(E[X_t u_t] - \rho E[X_t u_{t-1}] - \rho E[X_{t-1} u_t] + \rho^2 E[X_{t-1} u_{t-1}] = 0\).
+    If \(E[X_s u_s]=0\), this simplifies to \(-\rho (E[X_t u_{t-1}] + E[X_{t-1} u_t]) = 0\).
+    Under stationarity, \(E[X_t u_{t-1}] = E[X_{t+1} u_t]\), so we need \(E[(X_{t+1} + X_{t-1})u_t] = 0\).
+    \item If this stricter exogeneity for FGLS fails, OLS is consistent but FGLS is inconsistent. Significant differences between OLS and FGLS estimates might signal this problem.
+\end{itemize}
+
+\subsubsection{Correcting for Higher-Order Serial Correlation (e.g., AR(2))}
+For \(u_t = \rho_1 u_{t-1} + \rho_2 u_{t-2} + e_t\):
+\begin{itemize}
+    \item Transformation for \(t \ge 3\):
+    \[ (y_t - \rho_1 y_{t-1} - \rho_2 y_{t-2}) = \beta_0(1-\rho_1-\rho_2) + (X_t - \rho_1 X_{t-1} - \rho_2 X_{t-2})\boldsymbol{\beta} + e_t \]
+    \item FGLS: Estimate \(\hat{\rho}_1, \hat{\rho}_2\) from OLS residuals (\(\hat{u}_t\) on \(\hat{u}_{t-1}, \hat{u}_{t-2}\)). Transform data (complex for first two observations). Run OLS.
+\end{itemize}
+
+\subsubsection{What if the Serial Correlation Model Is Wrong?}
+\begin{itemize}
+    \item FGLS estimators (\(\hat{\boldsymbol{\beta}}\)) remain \textbf{consistent} if the regressors are strictly exogenous as required by FGLS, even if the assumed AR model (e.g., AR(1)) is incorrect.
+    \item However, standard inference (t-stats, F-stats) from the FGLS transformed equation will be \textbf{invalid} because the transformed errors will still exhibit serial correlation or heteroskedasticity if the model was misspecified.
+    \item \textbf{Robust Solution:} Apply Newey-West (HAC) standard errors to the OLS estimates obtained from the final FGLS transformed equation (e.g., eq. \eqref{eq:fgls_transformed_eq}). This makes inference robust to misspecification of the serial correlation structure and to heteroskedasticity in the underlying innovations.
+\end{itemize}
+
+\subsection{Heteroskedasticity in Time Series Regressions}
+
+\subsubsection{Heteroskedasticity-Robust Statistics}
+\begin{itemize}
+    \item OLS estimators remain unbiased/consistent with heteroskedasticity (given other assumptions hold).
+    \item Usual OLS standard errors/tests are invalid.
+    \item Heteroskedasticity-robust standard errors (e.g., White's) from Chapter 8 can be applied to time series if errors \(u_t\) are serially uncorrelated (Assumption TS.5' holds, only TS.4' - homoskedasticity - fails).
+\end{itemize}
+
+\subsubsection{Testing for Heteroskedasticity}
+Tests like Breusch-Pagan (BP) or White can be used, but with caveats for time series:
+\begin{enumerate}
+    \item Errors \(u_t\) from the main model should ideally not be serially correlated. Test for serial correlation first.
+    \item The error term (\(v_t\)) in the auxiliary regression for the test (e.g., \(\hat{u}_t^2\) on \(x_{tj}\)) must be homoskedastic and serially uncorrelated for standard F/LM statistics to be valid.
+\end{enumerate}
+\textbf{BP Test Example:}
+\begin{enumerate}
+    \item OLS of \(y_t\) on \(X_t\) to get \(\hat{u}_t\).
+    \item Regress \(\hat{u}_t^2 = \delta_0 + \delta_1 x_{t1} + \dots + \delta_k x_{tk} + v_t\).
+    \item Test \(H_0: \delta_1 = \dots = \delta_k = 0\) (homoskedasticity).
+\end{enumerate}
+
+\subsubsection{Autoregressive Conditional Heteroskedasticity (ARCH)}
+A dynamic form of heteroskedasticity where \(Var(u_t | \text{past } u)\) depends on past errors.
+\paragraph{ARCH(1) Model}
+Assume \(u_t\) are serially uncorrelated, i.e., \(E(u_t | u_{t-1}, u_{t-2}, \dots) = 0\).
+The conditional variance is modeled as:
+\begin{equation} \label{eq:arch1_cond_var}
+\sigma_t^2 \equiv Var(u_t | u_{t-1}, u_{t-2}, \dots) = E(u_t^2 | u_{t-1}) = \alpha_0 + \alpha_1 u_{t-1}^2
+\end{equation}
+\begin{itemize}
+    \item Requires \(\alpha_0 > 0\) and \(\alpha_1 \ge 0\) for non-negative variance.
+    \item If \(\alpha_1 = 0\), no ARCH effects.
+\end{itemize}
+We can write \(u_t^2 = \alpha_0 + \alpha_1 u_{t-1}^2 + v_t\), where \(E(v_t | u_{t-1}, \dots) = 0\).
+\begin{itemize}
+    \item \textbf{Stability Condition:} For a stable unconditional variance of \(u_t\), we need \(\alpha_1 < 1\).
+    \item If \(\alpha_1 > 0\), squared errors \(u_t^2\) are serially correlated, even if \(u_t\) are not. This implies volatility clustering.
+\end{itemize}
+
+\paragraph{Implications of ARCH for OLS (when \(u_t\) are serially uncorrelated)}
+\begin{itemize}
+    \item If the original model \(y_t = X_t\boldsymbol{\beta} + u_t\) satisfies TS.1-TS.3 and TS.5 (serially uncorrelated \(u_t\)), OLS remains BLUE. ARCH violates TS.4 (homoskedasticity of \(u_t\)) in a specific way.
+    \item More generally, if TS.1'-TS.5' hold (errors \(u_t\) are serially uncorrelated and satisfy \(E(u_t|X_t)=0\)), OLS is consistent, and usual heteroskedasticity-robust standard errors (White's) are asymptotically valid as ARCH is a form of heteroskedasticity.
+    \item \textbf{Why care about ARCH?}
+    \begin{enumerate}
+        \item More efficient estimators of \(\boldsymbol{\beta}\) may exist (e.g., WLS, MLE).
+        \item Modeling conditional variance (volatility) is often of direct interest, especially in finance.
+    \end{enumerate}
+\end{itemize}
+
+\paragraph{Testing for ARCH(1) Effects}
+\begin{enumerate}
+    \item Estimate the main model by OLS, get residuals \(\hat{u}_t\).
+    \item Regress \(\hat{u}_t^2\) on \(\hat{u}_{t-1}^2\):
+    \[ \hat{u}_t^2 = \hat{\alpha}_0 + \hat{\alpha}_1 \hat{u}_{t-1}^2 + \text{residual}_t \]
+    \item A statistically significant \(\hat{\alpha}_1\) (via t-test) indicates ARCH(1) effects. (Can extend to ARCH(q) by including more lags and using an F-test).
+\end{enumerate}
+
+\subsubsection{Heteroskedasticity and Serial Correlation in Regression Models}
+When both are present:
+\begin{itemize}
+    \item \textbf{Option 1: OLS with Fully Robust (HAC/Newey-West) Standard Errors.} This is a common and practical approach.
+    \item \textbf{Option 2: Sequential Correction.}
+    \begin{enumerate}
+        \item Test for serial correlation using a heteroskedasticity-robust test.
+        \item If SC present, apply CO/PW transformation.
+        \item Then, use heteroskedasticity-robust SEs on the FGLS estimates from the transformed equation, or test for heteroskedasticity in the (quasi-differenced) transformed equation's errors.
+    \end{enumerate}
+    \item \textbf{Option 3: Feasible GLS with Heteroskedasticity and AR(1) Serial Correlation.}
+    Model: \(y_t = X_t\boldsymbol{\beta} + u_t\), where \(u_t = \sqrt{h_t} \nu_t\) and \(\nu_t = \rho \nu_{t-1} + e_t\).
+    \(h_t\) is the heteroskedasticity function, e.g., \(h_t = \exp(\delta_0 + X_t\boldsymbol{\delta})\).
+    Procedure:
+    \begin{enumerate}
+        \item OLS on main model, get \(\hat{u}_t\).
+        \item Estimate \(h_t\): Regress \(\log(\hat{u}_t^2)\) on \(X_t\) (or \(\hat{y}_t, \hat{y}_t^2\)), get fitted \(\hat{g}_t\). Then \(\hat{h}_t = \exp(\hat{g}_t)\).
+        \item Transform for heteroskedasticity: create \(y_t^* = y_t/\sqrt{\hat{h}_t}\), \(X_t^* = X_t/\sqrt{\hat{h}_t}\). The errors of \(y_t^* = X_t^*\boldsymbol{\beta} + \nu_t\) are \( \nu_t \), which are homoskedastic but AR(1).
+        \item Apply standard CO or PW methods to estimate the equation for \(y_t^*\).
+    \end{enumerate}
+    The resulting FGLS estimators can be asymptotically efficient. For robust inference, one could still apply HAC standard errors to the final estimates from step 4 if unsure about model specifications.
+\end{itemize}
+
+
+\newpage
+
+\section{Advanced Time Series Topics}
+\setcounter{equation}{0}
+\setcounter{theorem}{0}
+\setcounter{assumption}{0}
+
+\subsection{Testing for Unit Roots}
+
+\subsubsection{Basic AR(1) Model for Unit Root Testing}
+The test typically starts with an AR(1) model for the time series \(y_t\):
+\begin{equation} \label{eq:ar1_unit_root}
+y_t = \alpha + \rho y_{t-1} + e_t, \quad t=1, 2, \dots
+\end{equation}
+where \(E(e_t | y_{t-1}, y_{t-2}, \dots, y_0) = 0\). A unit root exists if \(\rho=1\).
+
+\subsubsection{Hypotheses and Transformed Equation}
+\begin{itemize}
+    \item \textbf{Null Hypothesis (\(H_0\)):} \(y_t\) has a unit root (\(\rho=1\)).
+    \item \textbf{Alternative Hypothesis (\(H_1\)):} \(y_t\) is stationary (\(\rho < 1\)).
+\end{itemize}
+A convenient form for testing is obtained by subtracting \(y_{t-1}\) from both sides of Eq. \eqref{eq:ar1_unit_root} and defining \(\theta = \rho - 1\):
+\begin{equation} \label{eq:df_regression_simple}
+\Delta y_t = \alpha + \theta y_{t-1} + e_t
+\end{equation}
+Now, \(H_0: \theta=0\) versus \(H_1: \theta < 0\).
+
+\subsubsection{The Dickey-Fuller (DF) Test}
+\begin{itemize}
+    \item \textbf{Problem with Standard t-test:} Under \(H_0: \theta=0\), \(y_{t-1}\) is I(1) (non-stationary). The t-statistic for \(\hat{\theta}\) from OLS estimation of Eq. \eqref{eq:df_regression_simple} does not follow a standard normal or t-distribution, even asymptotically. Its distribution is known as the \textbf{Dickey-Fuller distribution}.
+    \item \textbf{DF Test Procedure:}
+    \begin{enumerate}
+        \item Estimate Eq. \eqref{eq:df_regression_simple} by OLS.
+        \item Calculate the t-statistic \(t_{\hat{\theta}} = \hat{\theta} / se(\hat{\theta})\).
+        \item Compare \(t_{\hat{\theta}}\) to critical values from the Dickey-Fuller distribution (e.g., Table 18.2 for no trend, Table 18.3 with trend).
+    \end{enumerate}
+    \item \textbf{Decision Rule:} Reject \(H_0\) (unit root) if \(t_{\hat{\theta}}\) is less than (more negative than) the appropriate Dickey-Fuller critical value.
+\end{itemize}
+\textbf{Table 18.2 Asymptotic Critical Values (No Time Trend in test regression):}
+\begin{center}
+\begin{tabular}{|l|c|c|c|c|}
+\hline
+Significance level & 1\% & 2.5\% & 5\% & 10\% \\
+\hline
+Critical value & -3.43 & -3.12 & -2.86 & -2.57 \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsubsection{The Augmented Dickey-Fuller (ADF) Test}
+Used to account for serial correlation in \(\Delta y_t\) (which is \(e_t\) in Eq. \eqref{eq:df_regression_simple} under \(H_0\)).
+\begin{itemize}
+    \item \textbf{ADF Test Regression:} Add \(p\) lags of \(\Delta y_t\) to the DF regression:
+    \begin{equation} \label{eq:adf_regression}
+    \Delta y_t = \alpha + \theta y_{t-1} + \gamma_1 \Delta y_{t-1} + \dots + \gamma_p \Delta y_{t-p} + e_t
+    \end{equation}
+    The goal is to make the error term \(e_t\) in this augmented regression serially uncorrelated.
+    \item \textbf{Test Procedure:} Estimate Eq. \eqref{eq:adf_regression} by OLS. The t-statistic for \(\hat{\theta}\) on \(y_{t-1}\) is compared to the \textit{same} Dickey-Fuller critical values as the basic DF test.
+    \item Choosing \(p\) (number of lags) is important; too few leads to size distortion, too many reduces power. Often guided by data frequency or information criteria.
+\end{itemize}
+
+\subsubsection{Testing for Unit Roots with a Time Trend}
+If \(y_t\) exhibits a trend, it might be trend-stationary (I(0) around a trend) rather than I(1).
+\begin{itemize}
+    \item \textbf{Test Regression with Trend:} Include a deterministic time trend \(t\) in the ADF regression:
+    \begin{equation} \label{eq:adf_regression_trend}
+    \Delta y_t = \alpha + \delta t + \theta y_{t-1} + \sum_{j=1}^p \gamma_j \Delta y_{t-j} + e_t
+    \end{equation}
+    \item \textbf{Critical Values:} The t-statistic for \(\hat{\theta}\) is compared to \textit{different, more negative} Dickey-Fuller critical values that account for the presence of the trend (e.g., Table 18.3).
+\end{itemize}
+\textbf{Table 18.3 Asymptotic Critical Values (Linear Time Trend in test regression):}
+\begin{center}
+\begin{tabular}{|l|c|c|c|c|}
+\hline
+Significance level & 1\% & 2.5\% & 5\% & 10\% \\
+\hline
+Critical value & -3.96 & -3.66 & -3.41 & -3.12 \\
+\hline
+\end{tabular}
+\end{center}
+\begin{itemize}
+    \item The t-statistic on the trend coefficient \(\hat{\delta}\) does not follow a standard distribution under \(H_0: \theta=0\).
+\end{itemize}
+
+\subsubsection{Important Considerations}
+\begin{itemize}
+    \item Failure to reject a unit root does not mean we "accept" it; it just means insufficient evidence against it. Tests can have low power.
+    \item Tests are sensitive to sample size (low power in small samples) and structural breaks (bias towards not rejecting unit root).
+    \item Other tests exist (e.g., Phillips-Perron, KPSS with \(H_0\): I(0)).
+\end{itemize}
+
+\subsection{Spurious Regression}
+
+\subsubsection{Definition and Context}
+\begin{itemize}
+    \item \textbf{Spurious Regression (Time Series with I(1) Variables):} Occurs when regressing one I(1) (unit root) time series on another \textit{independent} I(1) time series.
+    \item Such regressions often produce misleadingly ``good'' results:
+    \begin{itemize}
+        \item High \(R^2\) values.
+        \item Statistically significant t-statistics for slope coefficients.
+    \end{itemize}
+    Even though there is no true underlying relationship between the series.
+    \item This is distinct from spurious correlation due to omitted common deterministic trends in I(0) series.
+\end{itemize}
+
+\subsubsection{The Problem Illustrated: Independent Random Walks}
+Consider two independent random walks (I(1) processes):
+\begin{align}
+x_t &= x_{t-1} + a_t \label{eq:rw_x} \\
+y_t &= y_{t-1} + e_t \label{eq:rw_y}
+\end{align}
+where \(\{a_t\}\) and \(\{e_t\}\) are independent i.i.d. innovation processes with zero mean. This implies \(\{x_t\}\) and \(\{y_t\}\) are independent processes.
+
+If we run the OLS regression:
+\begin{equation} \label{eq:spurious_reg_model}
+y_t = \beta_0 + \beta_1 x_t + u_t
+\end{equation}
+
+\subsubsection{Why Standard OLS Fails (Consequences of I(1) Data)}
+\begin{itemize}
+    \item \textbf{Nature of the Error Term under \(H_0\):} If the true \(\beta_1 = 0\) (no relationship), then \(y_t = \beta_0 + u_t\). Since \(y_t\) is I(1), the error term \(u_t\) must also be I(1) (it inherits the random walk properties of \(y_t\)).
+    \item \textbf{Violation of OLS Assumptions:} An I(1) error term \(u_t\) is:
+    \begin{itemize}
+        \item Non-stationary: Its variance grows with time.
+        \item Highly serially correlated.
+    \end{itemize}
+    This violates even the asymptotic Gauss-Markov assumptions required for valid OLS inference (Chapter 11).
+    \item \textbf{Non-Standard Asymptotic Distributions (Granger \& Newbold, 1974):}
+    \begin{itemize}
+        \item The OLS estimator \(\hat{\beta}_1\) does not converge to 0 in probability as would be expected for independent series.
+        \item The \textbf{t-statistic for \(\hat{\beta}_1\)} does not follow a standard normal or t-distribution. It tends to be too large, leading to spurious rejection of \(H_0: \beta_1 = 0\) much more often than the nominal significance level suggests.
+        \item The \textbf{\(R^2\)} from the regression does not converge to a population constant. It converges to a non-degenerate random variable, meaning there's a high probability of observing a substantial \(R^2\) even for independent I(1) series.
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Implications and Further Points}
+\begin{itemize}
+    \item \textbf{Including a Time Trend:} Adding a deterministic time trend to the regression \eqref{eq:spurious_reg_model} does \textbf{not} solve the spurious regression problem if \(x_t\) and \(y_t\) are I(1) (e.g., random walks with drift). Detrending an I(1) series still leaves an I(1) series.
+    \item \textbf{Multiple Regressors:} The problem extends to multiple regression if the dependent variable and at least one independent variable are I(1) and not cointegrated.
+    \item \textbf{General I(0) Innovations:} The qualitative results hold even if \(a_t\) and \(e_t\) are general stationary I(0) processes, not just i.i.d.
+\end{itemize}
+
+\subsubsection{Caution and Solutions}
+\begin{itemize}
+    \item Be extremely wary of regressing I(1) variables in their levels unless there's a strong theoretical basis for a long-run (cointegrating) relationship.
+    \item \textbf{Differencing:} A common solution is to first-difference I(1) variables to achieve stationarity (\(\Delta y_t\) and \(\Delta x_t\) will be I(0)). Regressing \(\Delta y_t\) on \(\Delta x_t\) uses standard OLS inference if the differenced errors are well-behaved.
+    \item \textbf{Cointegration (Topic of Section 18-4):} If a linear combination of I(1) variables is I(0), they are said to be cointegrated. In this specific case, regressions in levels can be meaningful.
+\end{itemize}
+
+\subsection{Cointegration and Error Correction Models}
+
+\subsection{Cointegration}
+If \(y_t\) and \(x_t\) are both I(1), they are \textbf{cointegrated} if a linear combination \(s_t = y_t - \beta x_t\) is I(0) (stationary) for some cointegrating parameter \(\beta\).
+\begin{itemize}
+    \item This implies a \textbf{long-run equilibrium relationship}: \(y_t \approx \beta x_t\).
+    \item \(s_t\) is the deviation from equilibrium, which is temporary as it's I(0).
+\end{itemize}
+
+\subsubsection{Testing for Cointegration}
+\(H_0\): No cointegration vs. \(H_1\): Cointegration.
+\begin{enumerate}
+    \item \textbf{If \(\beta\) is known:} Form \(s_t = y_t - \beta x_t\). Perform a DF/ADF test on \(s_t\). Reject unit root in \(s_t \implies\) cointegration.
+    \item \textbf{If \(\beta\) is unknown (Engle-Granger Test):}
+    \begin{enumerate}
+        \item Estimate the cointegrating regression by OLS: \(y_t = \hat{\alpha} + \hat{\beta} x_t + \hat{u}_t\). (May include constant/trend).
+        \item Obtain residuals \(\hat{u}_t\).
+        \item Perform a DF/ADF test on \(\hat{u}_t\): Regress \(\Delta \hat{u}_t = \theta \hat{u}_{t-1} + \text{lags of } \Delta \hat{u}_t + \text{error}\).
+        \item Compare the t-statistic of \(\hat{\theta}\) to \textit{special critical values} (e.g., Tables 18.4, 18.5), which are more negative than standard DF critical values.
+    \end{enumerate}
+\end{enumerate}
+\textbf{Table 18.4 Critical Values (Cointegration Test, Levels reg. has constant):}
+\begin{center}
+\begin{tabular}{|l|c|c|c|c|} \hline Significance & 1\% & 2.5\% & 5\% & 10\% \\ \hline Critical Value & -3.90 & -3.59 & -3.34 & -3.04 \\ \hline \end{tabular}
+\end{center}
+\textbf{Table 18.5 Critical Values (Cointegration Test, Levels reg. has constant \& trend):}
+\begin{center}
+\begin{tabular}{|l|c|c|c|c|} \hline Significance & 1\% & 2.5\% & 5\% & 10\% \\ \hline Critical Value & -4.32 & -4.03 & -3.78 & -3.50 \\ \hline \end{tabular}
+\end{center}
+
+\subsubsection{Estimating and Testing the Cointegrating Parameter \(\beta\)}
+\begin{itemize}
+    \item OLS estimator \(\hat{\beta}\) from \(y_t = \alpha + \beta x_t + u_t\) is consistent (super-consistent) if cointegrated.
+    \item Standard inference on this \(\hat{\beta}\) is problematic due to I(1) \(x_t\) and potential endogeneity/serial correlation in \(u_t\).
+    \item \textbf{Leads and Lags Estimator:} To perform valid inference on \(\beta\), augment the cointegrating regression:
+    \[ y_t = \alpha_0 + \beta x_t + \phi_0 \Delta x_t + \sum_{j=1}^p \phi_j \Delta x_{t-j} + \sum_{j=1}^q \psi_j \Delta x_{t+j} + e_t \]
+    OLS on this equation yields \(\hat{\beta}\). Standard t-tests (with HAC SEs for \(e_t\) if needed) are asymptotically valid for this \(\hat{\beta}\).
+\end{itemize}
+
+\subsubsection{Error Correction Models (ECM)}
+If \(y_t\) and \(x_t\) are cointegrated (\(s_t = y_t - \beta x_t\) is I(0)), an ECM can model short-run dynamics and adjustment to long-run equilibrium.
+\begin{itemize}
+    \item \textbf{Error Correction Term (ECT):} \(s_{t-1} = y_{t-1} - \beta x_{t-1}\) (lagged deviation from equilibrium).
+    \item \textbf{General ECM form:}
+    \begin{equation} \label{eq:ecm_general}
+    \Delta y_t = \alpha_0 + \sum \alpha_j \Delta y_{t-j} + \sum \gamma_j \Delta x_{t-j} + \delta s_{t-1} + u_t
+    \end{equation}
+    All terms in this regression are I(0).
+    \item \textbf{Coefficient \(\delta\):} Speed of adjustment. Expected \(\delta < 0\).
+    \begin{itemize}
+        \item If \(s_{t-1} > 0\) (\(y\) was above equilibrium), \(\delta s_{t-1}\) pulls \(\Delta y_t\) down.
+        \item If \(s_{t-1} < 0\) (\(y\) was below equilibrium), \(\delta s_{t-1}\) pushes \(\Delta y_t\) up.
+    \end{itemize}
+    \item \textbf{Estimation:}
+    \begin{enumerate}
+        \item \textbf{If \(\beta\) known:} Use \(s_{t-1} = y_{t-1} - \beta x_{t-1}\) directly in OLS estimation of Eq. \eqref{eq:ecm_general}.
+        \item \textbf{If \(\beta\) unknown (Engle-Granger Two-Step):}
+        \begin{enumerate}
+            \item Estimate \(\beta\) from the cointegrating regression \(y_t = \alpha + \beta x_t + \text{error}\) to get \(\hat{\beta}\).
+            \item Form residuals \(\hat{s}_{t-1} = y_{t-1} - \hat{\beta} x_{t-1}\).
+            \item Estimate Eq. \eqref{eq:ecm_general} by OLS, using \(\hat{s}_{t-1}\) as the ECT.
+    \end{enumerate}
+        Asymptotically, using \(\hat{\beta}\) instead of true \(\beta\) does not affect inference on other ECM parameters (\(\alpha_j, \gamma_j, \delta\)).
+    \end{enumerate}
+\end{itemize}
+
+\subsection{Forecasting}
+
+\subsubsection{Vector Autoregressive (VAR) Models}
+VAR models are used to capture the linear interdependencies among multiple time series. Each variable is modeled as a function of its own past values and the past values of all other variables in the system.
+
+\paragraph{Structure of a VAR(p) Model}
+For a bivariate system with variables \(y_t\) and \(z_t\), a VAR(p) model is:
+\begin{align}
+y_t &= \alpha_1 + \sum_{i=1}^p \beta_{1i} y_{t-i} + \sum_{i=1}^p \gamma_{1i} z_{t-i} + u_{1t} \label{eq:var_y} \\
+z_t &= \alpha_2 + \sum_{i=1}^p \beta_{2i} y_{t-i} + \sum_{i=1}^p \gamma_{2i} z_{t-i} + u_{2t} \label{eq:var_z}
+\end{align}
+\begin{itemize}
+    \item \(p\) is the order of the VAR (number of lags).
+    \item \(\alpha_1, \alpha_2\) are intercepts.
+    \item \(\beta_{ki}, \gamma_{ki}\) are coefficients for the lagged variables.
+    \item \(u_{1t}, u_{2t}\) are innovation terms (shocks) for each equation.
+    \begin{itemize}
+        \item Assumed serially uncorrelated: \(E(u_{kt} u_{k,t-s}) = 0\) for \(s \neq 0\).
+        \item Uncorrelated with past values of all variables.
+        \item Can be contemporaneously correlated: \(E(u_{1t} u_{2t}) \neq 0\).
+    \end{itemize}
+    \item Typically applied to stationary time series (I(0)). If variables are I(1), they are often differenced first, or a Vector Error Correction Model (VECM) is used if they are cointegrated.
+\end{itemize}
+
+\paragraph{Estimation and Lag Length Selection}
+\begin{itemize}
+    \item \textbf{Estimation:} Since each equation has the same regressors (lags of all variables), Ordinary Least Squares (OLS) applied equation by equation is consistent and asymptotically efficient.
+    \item \textbf{Lag Length (\(p\)) Selection:} Crucial for model performance.
+    \begin{itemize}
+        \item Methods include sequential F-tests or model selection criteria like AIC (Akaike Information Criterion) or SIC/BIC (Schwarz/Bayesian Information Criterion).
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Granger Causality}
+Granger causality is a statistical concept indicating whether past values of one time series are useful for predicting another time series, beyond the information contained in the latter's own past values.
+
+\paragraph{Concept}
+\begin{itemize}
+    \item Variable \(z_t\) \textbf{Granger-causes} variable \(y_t\) if knowledge of the past history of \(z_t\) significantly improves the prediction of \(y_t\), given the past history of \(y_t\).
+    \item This is a test of \textit{predictive causality}, not necessarily structural or economic causality.
+\end{itemize}
+
+\paragraph{Testing for Granger Causality using VAR}
+\subparagraph{Does \(z\) Granger-cause \(y\)?}
+Based on equation \eqref{eq:var_y} for \(y_t\):
+\begin{itemize}
+    \item \textbf{Null Hypothesis (\(H_0\)):} \(z\) does not Granger-cause \(y\).
+    \[ H_0: \gamma_{11} = \gamma_{12} = \dots = \gamma_{1p} = 0 \]
+    \item \textbf{Alternative Hypothesis (\(H_1\)):} \(z\) Granger-causes \(y\) (at least one \(\gamma_{1i} \neq 0\)).
+    \item \textbf{Test Procedure:}
+    \begin{enumerate}
+        \item \textbf{Unrestricted Model:} Estimate equation \eqref{eq:var_y} by OLS. Obtain \(SSR_{UR}\).
+        \item \textbf{Restricted Model:} Estimate equation \eqref{eq:var_y} imposing \(H_0\) (i.e., omitting all lags of \(z_t\)):
+        \[ y_t = \alpha_1 + \sum_{i=1}^p \beta_{1i} y_{t-i} + u_{1t}^R \]
+        Obtain \(SSR_R\).
+        \item \textbf{F-statistic:}
+        \[ F = \frac{(SSR_R - SSR_{UR})/p}{SSR_{UR}/(n - k_{UR} - 1)} \]
+        where \(p\) is the number of restrictions (number of \(\gamma_{1i}\) coefficients), \(n\) is the number of observations used, and \(k_{UR}\) is the number of regressors in the unrestricted model (here, \(k_{UR} = 2p\), excluding the intercept). So the denominator df is \(n - 2p - 1\).
+        \item \textbf{Decision:} Reject \(H_0\) if \(F > F_{critical}\) from the \(F(p, n-2p-1)\) distribution.
+    \end{enumerate}
+\end{itemize}
+
+\subparagraph{Does \(y\) Granger-cause \(z\)?}
+A symmetric procedure is applied to equation \eqref{eq:var_z} for \(z_t\), testing the null hypothesis \(H_0: \beta_{21} = \beta_{22} = \dots = \beta_{2p} = 0\).
+
+\subparagraph{Possible Outcomes:}
+\begin{itemize}
+    \item Unidirectional Granger causality (e.g., \(z \rightarrow y\) only).
+    \item Unidirectional Granger causality (e.g., \(y \rightarrow z\) only).
+    \item Bidirectional Granger causality (feedback: \(z \leftrightarrow y\)).
+    \item No Granger causality in either direction.
+\end{itemize}
+
+\subparagraph{Extension to More Variables:}
+If more variables are in the VAR system, the test for \(z\) Granger-causing \(y\) involves testing the joint significance of all lags of \(z\) in the equation for \(y\), which also includes lags of \(y\) and lags of all other system variables. The F-statistic construction remains similar, adjusting for the number of regressors.
+
+\newpage
+
+
+\section{Pooling Cross Sections across Time: Simple Panel Data Methods}
+\setcounter{equation}{0}
+\setcounter{theorem}{0}
+\setcounter{assumption}{0}
+
+\subsection{Pooling Independent Cross Sections across Time}
+Definition and Purpose:
+\begin{itemize}
+    \item \textbf{Independently Pooled Cross Section:} Formed by combining random samples drawn from a large population at \textit{different points in time} (e.g., different years). Observations are independent within each cross-section and across time periods.
+    \item \textbf{Key Reasons for Pooling:}
+    \begin{itemize}
+        \item \textbf{Increase Sample Size:} Leads to more precise estimators (smaller standard errors) and more powerful statistical tests. Most effective if the underlying relationships (slopes) are stable over time.
+        \item \textbf{Analyze Changes Over Time:} Allows for studying how population characteristics, intercepts, or the effects (slopes) of variables change.
+    \end{itemize}
+\end{itemize}
+
+\textbf{Econometric Modeling:}
+The primary tool is Ordinary Least Squares (OLS) on the combined dataset, with modifications to account for time:
+\begin{itemize}
+    \item Achieved by including \textbf{year dummy variables} for each time period except one (the base period).
+    \item Model: \( y_{it} = \beta_0 + \delta_1 d2_t + \delta_2 d3_t + \dots + \delta_{T-1} dT_t + \beta_1 x_{it1} + \dots + \beta_k x_{itk} + u_{it} \)
+    \item \(\beta_0\) is the intercept for the base period.
+    \item \(\delta_j\) is the difference in the intercept for period \(j+1\) relative to the base period, ceteris paribus.
+    \item Example 13.1 (Fertility): Shows how year dummy coefficients can reveal trends over time.
+\end{itemize}
+
+\textbf{Allowing Slopes to Change Over Time}
+\begin{itemize}
+    \item Achieved by including \textbf{interaction terms} between year dummy variables and the explanatory variable(s) of interest.
+    \item Model Example (for two periods, base and year ``Y2''):
+    \[ y_{it} = \beta_0 + \gamma_0 dY2_t + \beta_1 x_{it} + \gamma_1 (dY2_t \cdot x_{it}) + \text{other controls} + u_{it} \]
+    \item \(\beta_1\) = effect of \(x\) in the base period.
+    \item \(\beta_1 + \gamma_1\) = effect of \(x\) in year ``Y2''.
+    \item \(\gamma_1\) = change in the effect of \(x\) from the base period to year ``Y2''. A t-test on \(\hat{\gamma}_1\) checks if this change is significant.
+    \item Example 13.2 (Return to Education and Gender Wage Gap): Demonstrates testing for changes in slopes over time.
+\end{itemize}
+
+\textbf{Important Statistical Considerations}
+\begin{itemize}
+    \item \textbf{Nominal vs. Real Data:}
+    \begin{itemize}
+        \item For monetary variables in \textbf{logarithmic form}: Including year dummies often adequately controls for general inflation (affecting intercepts).
+        \item For monetary variables in \textbf{level form}: Essential to use \textbf{real (deflated) values} and include year dummies.
+    \end{itemize}
+    \item \textbf{Heteroskedasticity:}
+    \begin{itemize}
+        \item The error variance (\(Var(u_{it})\)) may differ across time or with other regressors.
+        \item Use \textbf{heteroskedasticity-robust standard errors} and test statistics.
+    \end{itemize}
+    \item \textbf{Chow Test for Structural Change Across Time:}
+    \begin{itemize}
+        \item An F-test to determine if the entire regression function (intercepts and slopes) differs across time periods.
+        \item Can be implemented by comparing Sums of Squared Residuals (SSRs) from pooled vs. separate regressions (not robust to heteroskedasticity).
+        \item Alternatively, and more flexibly, by testing the joint significance of a year dummy and its interactions with all other explanatory variables (can be made robust).
+    \end{itemize}
+\end{itemize}
+
+\subsection{Policy Analysis with Pooled Cross Sections}
+
+\subsubsection{Introduction: Natural Experiments} % Was \section
+\begin{itemize}
+    \item Pooled cross sections are valuable for evaluating policies/events via \textbf{natural experiments} (or quasi-experiments).
+    \item These occur when an exogenous event (e.g., policy change) affects a \textbf{treatment group (T)} but not a \textbf{control group (C)}.
+    \item Data is typically required from \textit{before} and \textit{after} the event/policy.
+\end{itemize}
+
+\subsubsection{The Difference-in-Differences (DD or DID) Estimator} % Was \section
+\paragraph{Setup and Model} % Was \subsection
+\begin{itemize}
+    \item Requires two groups (T, C) and two time periods (1: Pre-policy, 2: Post-policy).
+    \item Regression model estimated by OLS on pooled data:
+    \[ y_{it} = \beta_0 + \delta_0 d2_t + \beta_1 dT_i + \delta_1 (d2_t \cdot dT_i) + \text{other factors} + u_{it} \]
+    \begin{itemize}
+        \item \(y_{it}\): Outcome for unit \(i\) in period \(t\).
+        \item \(d2_t\): Dummy for Period 2 (1 if post-policy, 0 if pre-policy). \(\delta_0\) = time trend for control group.
+        \item \(dT_i\): Dummy for Treatment group (1 if T, 0 if C). \(\beta_1\) = pre-policy difference (T vs. C).
+        \item \((d2_t \cdot dT_i)\): Interaction term. \(\delta_1\) is the DD estimate of the policy effect.
+    \end{itemize}
+\end{itemize}
+
+\paragraph{Derivation and Interpretation of \(\hat{\delta}_1\)} % Was \subsection
+The OLS estimate \(\hat{\delta}_1\) represents the policy effect.
+\begin{itemize}
+    \item Expected values \(E(y)\) (assuming \(E(u_{it})=0\)):
+    \begin{itemize}
+        \item Control, Pre: \(\beta_0\)
+        \item Control, Post: \(\beta_0 + \delta_0\)
+        \item Treatment, Pre: \(\beta_0 + \beta_1\)
+        \item Treatment, Post: \(\beta_0 + \delta_0 + \beta_1 + \delta_1\)
+    \end{itemize}
+    \item Change for Treatment Group (\(\Delta E(y)_T\)): \((\beta_0 + \delta_0 + \beta_1 + \delta_1) - (\beta_0 + \beta_1) = \delta_0 + \delta_1\)
+    \item Change for Control Group (\(\Delta E(y)_C\)): \((\beta_0 + \delta_0) - (\beta_0) = \delta_0\)
+    \item DD estimator: \(\hat{\delta}_1 = \Delta E(y)_T - \Delta E(y)_C = (\delta_0 + \delta_1) - \delta_0 = (\bar{y}_{\text{Post,T}} - \bar{y}_{\text{Post,C}}) - (\bar{y}_{\text{Pre,T}} - \bar{y}_{\text{Pre,C}}) \).
+    \item Average Treatment effect(ATE): \(\hat{\delta}_1 = (\bar{y}_{\text{Post,T}} - \bar{y}_{\text{Pre,T}}) - (\bar{y}_{\text{Post,C}} - \bar{y}_{\text{Pre,C}})\) which  provides a different interpretation of the DD estimator. The first term, $(\bar{y}_{\text{Post,T}} -\bar{y}_{\text{Pre,T}})$, is the difference in means over time for the treated group. This would be a good estimator of the policy effect only if we can assume no external factors changed across the two time periods. While the second term, $(\bar{y}_{\text{Post,C}} - \bar{y}_{\text{Pre,C}})$ compute the same trend in averages for the control group.
+\end{itemize}
+
+We can estimate the $\delta_1$ in two ways: (1)Compute the differences in averages between the treatment and control groups in each time period, and then difference the results over time; (2)Compute the change in averages over time for each of the treatment and control groups, and then difference these changes.
+\paragraph{Parallel Trends Assumption} % Was \subsection
+\begin{itemize}
+    \item \textbf{Crucial Assumption:} In the absence of the treatment, the average outcome for the treatment group would have followed the same trend as the average outcome for the control group.
+    \item Violations lead to biased DD estimates.
+\end{itemize}
+
+\paragraph{Role of Other Explanatory Variables} % Was \subsection
+\begin{itemize}
+    \item Including controls can account for compositional changes and improve precision of \(\hat{\delta}_1\).
+\end{itemize}
+
+\subsubsection{The Difference-in-Difference-in-Differences (DDD) Estimator} % Was \section
+\paragraph{Motivation and Setup} % Was \subsection
+\begin{itemize}
+    \item Used when the parallel trends assumption between the initial T and C groups is suspect.
+    \item Introduces an additional layer of control, e.g., data from another state (State A, no policy) for the same groups (L: Low-income/target, M: Middle-income/control) as in the policy state (State B).
+\end{itemize}
+\paragraph{DDD Regression Model} % Was \subsection
+\[ y = \beta_0 + \beta_1 dL + \beta_2 dB + \beta_3 (dL \cdot dB) + \delta_0 d2 + \delta_1 (d2 \cdot dL) + \delta_2 (d2 \cdot dB) + \delta_3 (d2 \cdot dL \cdot dB) + u \]
+\begin{itemize}
+    \item \(dL_i\): Dummy for low-income group.
+    \item \(dB_s\): Dummy for State B (policy state).
+    \item \(\delta_3\) on the triple interaction \(d2_t \cdot dL_i \cdot dB_s\) is the DDD estimate.
+\end{itemize}
+
+\paragraph{Derivation and Interpretation of \(\hat{\delta}_3\)} % Was \subsection
+\begin{itemize}
+    \item Let \(DD_B\) be the DD estimate in State B (policy state, comparing L and M groups): \(DD_B = \delta_1 + \delta_3\).
+    \item Let \(DD_A\) be the DD estimate in State A (control state, comparing L and M groups): \(DD_A = \delta_1\).
+    \item DDD estimator: \(\delta_3 = DD_B - DD_A = (\delta_1 + \delta_3) - \delta_1\).
+    \item \(\hat{\delta}_3\) aims to net out common differential trends between L and M groups.
+\end{itemize}
+
+\subsubsection{A General Framework for Policy Analysis with Pooled Cross Sections} % Was \section
+\paragraph{Model for Complex Policy Rollouts} % Was \subsection
+\[ y_{igt} = \lambda_t + \alpha_g + \beta x_{gt} + \mathbf{z}_{igt}\gamma + u_{igt} \]
+\begin{itemize}
+    \item \(y_{igt}\): Outcome for unit \(i\) in group \(g\) at time \(t\).
+    \item \(\lambda_t\): Time fixed effects (e.g., year dummies) for common time trends.
+    \item \(\alpha_g\): Group fixed effects (e.g., state dummies) for time-invariant group differences.
+    \item \(x_{gt}\): Policy variable(s) for group \(g\) at time \(t\). \(\beta\) is the effect of interest. It is important to not think that $x_{gt}$ can always be constructed by interacting dummy variables indicating groups and time periods, as in the basic DD setup.
+    \item \(\mathbf{z}_{igt}\): Other control variables.
+\end{itemize}
+\paragraph{Estimation and Extensions} % Was \subsection
+\begin{itemize}
+    \item Estimated by Pooled OLS with dummies for time periods and groups. Robust standard errors recommended.
+    \item Can handle staggered policy adoption, multiple policies, continuous policies, and lagged effects.
+    \item Can be extended to include group-specific time trends (e.g., \(\alpha_g + c_g \cdot t\)) if \(T \ge 3\).
+    \item Caution: Avoid perfect collinearity if \(x_{gt}\) only varies at the \((g,t)\) level and full \((g,t)\) interaction dummies are used.
+\end{itemize}
+
+\subsection{Two-Period Panel Data Analysis}
+
+\begin{itemize}
+    \item \textbf{Panel Data (Longitudinal Data):} Involves observing the \textit{same} cross-sectional units (e.g., individuals, firms, cities) over multiple time periods. This section focuses on the simplest case: two time periods (\(t=1\) and \(t=2\)).
+    \item Allows controlling for unobserved unit-specific characteristics that are constant over time.
+\end{itemize}
+
+\subsubsection{The Unobserved Effects Model (Fixed Effects Model)}
+For unit \(i\) at time \(t\), with a single explanatory variable \(x_{it}\):
+\begin{equation} 
+y_{it} = \beta_0 + \delta_0 d2_t + \beta_1 x_{it} + a_i + u_{it} \quad \text{for } t=1, 2 \label{eq:13.20}
+\end{equation}
+\begin{itemize}
+    \item \(y_{it}\): Dependent variable.
+    \item \(\beta_0\): Intercept for period 1.
+    \item \(d2_t\): Time dummy for period 2 (\(d2_t=1\) if \(t=2\), 0 if \(t=1\)).
+    \item \(\delta_0\): Change in intercept from period 1 to period 2 (so intercept in period 2 is \(\beta_0 + \delta_0\)).
+    \item \(x_{it}\): Explanatory variable.
+    \item \(\beta_1\): Slope coefficient of interest.
+    \item \(a_i\): \textbf{Unobserved effect} (or fixed effect / unobserved heterogeneity). Captures time-constant, unit-specific unobserved factors.
+    \item \(u_{it}\): \textbf{Idiosyncratic error} (or time-varying error). Captures time-varying unobserved factors.
+\end{itemize}
+
+\subsubsection{The Problem with Pooled OLS}
+If we pool data from both periods and estimate \(y_{it} = \beta_0 + \delta_0 d2_t + \beta_1 x_{it} + v_{it}\), where \(v_{it} = a_i + u_{it}\) is the composite error:
+\begin{itemize}
+    \item If \(a_i\) is correlated with \(x_{it}\) (i.e., \(Cov(x_{it}, a_i) \neq 0\)), then \(x_{it}\) is correlated with \(v_{it}\).
+    \item This leads to \textbf{biased and inconsistent} OLS estimators (\textbf{heterogeneity bias}).
+    \item Serial correlation in \(v_{it}\) for the same unit \(i\) (\(Cov(v_{i1}, v_{i2}) = Var(a_i)\)) also violates OLS assumptions for standard error validity, even if \(Cov(x_{it},a_i)=0\).
+\end{itemize}
+
+\subsubsection{The First-Differencing (FD) Method}
+\paragraph{Motivation}
+To eliminate the time-constant unobserved effect \(a_i\), especially when it's correlated with \(x_{it}\).
+\paragraph{Derivation of the First-Differenced Equation}
+\begin{enumerate}
+    \item Model for Period 2 (\(t=2\), \(d2_t=1\)):
+    \[ y_{i2} = (\beta_0 + \delta_0) + \beta_1 x_{i2} + a_i + u_{i2} \]
+    \item Model for Period 1 (\(t=1\), \(d2_t=0\)):
+    \[ y_{i1} = \beta_0 + \beta_1 x_{i1} + a_i + u_{i1} \]
+    \item Subtracting Period 1 equation from Period 2 equation:
+    \begin{align}
+    (y_{i2} - y_{i1}) &= ((\beta_0 + \delta_0) - \beta_0) + (\beta_1 x_{i2} - \beta_1 x_{i1}) + (a_i - a_i) + (u_{i2} - u_{i1}) \notag \\
+    \Delta y_i &= \delta_0 + \beta_1 \Delta x_i + \Delta u_i \label{eq:13.24}
+    \end{align}
+    where \(\Delta y_i = y_{i2} - y_{i1}\), \(\Delta x_i = x_{i2} - x_{i1}\), and \(\Delta u_i = u_{i2} - u_{i1}\).
+    \item The unobserved effect \(a_i\) is eliminated.
+\end{enumerate}
+
+\paragraph{Estimation and Interpretation}
+\begin{itemize}
+    \item The differenced equation is estimated by OLS using the cross-section of changes.
+    \item \(\hat{\beta}_1\) estimates the effect of a change in \(x\) on the change in \(y\), holding \(a_i\) fixed.
+    \item \(\hat{\delta}_0\) (the intercept in the differenced regression) estimates the autonomous change in \(y\) over time.
+\end{itemize}
+
+\subsubsection{Key Assumptions for FD Estimator Consistency}
+\begin{enumerate}
+    \item \textbf{Strict Exogeneity of \(u_{it}\) (conditional on \(a_i\)):} The original idiosyncratic errors \(u_{it}\) must be uncorrelated with \(x_{is}\) in \textit{all} time periods (\(s,t \in \{1,2\}\)). This implies \(Cov(\Delta x_i, \Delta u_i) = 0\).
+    \item \textbf{Variation in \(\Delta x_i\):} The change in \(x\), \(\Delta x_i\), must have non-zero variance across units. If \(x_{it}\) is time-constant, its effect cannot be estimated.
+    \item (For valid standard OLS inference): Homoskedasticity of \(\Delta u_i\), i.e., \(Var(\Delta u_i | \Delta x_i)\) is constant.
+\end{enumerate}
+\begin{tcolorbox}[colback=blue!5!white, colframe=blue!80!black, title=Assumption FD.1 (Model Structure)]
+We assume for each individual \( i \), the model is:
+\[
+y_{it} = \beta_1 x_{it1} + \dots + \beta_k x_{itk} + a_i + u_{it}, \quad t = 1, \dots, T
+\]
+where the $\beta_j$ are the parameters to estimate and $a_i$ is the unobserved effect.
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=blue!5!white, colframe=blue!80!black, title=Assumption FD.2 (Random Sampling)]
+We have a random sample from the cross section.
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=blue!5!white, colframe=blue!80!black, title=Assumption FD.3 (Time Variation and No Perfect Collinearity)]
+Each explanatory variable changes over time (for at least some \( i \)), and no perfect linear relationships exist among the explanatory variables.
+\end{tcolorbox}
+For the next assumption, it is useful to let $\mathbf{X_i}$ denote the explanatory variables for all time periods for cross-sectional observation $i$; thus, $\mathbf{X_i}$; contains $x_{itj}, t = 1,\ldots, T, j = 1,\ldots, k$.
+
+\begin{tcolorbox}[colback=blue!5!white, colframe=blue!80!black, title=Assumption FD.4 (Strict Exogeneity)]
+For each \( t \), the expected value of the idiosyncratic error given the explanatory variables in \emph{all} time periods and the unobserved effect is zero:
+\[
+\mathbb{E}(u_{it} \mid \mathbf{X}_i, a_i) = 0.
+\]
+\end{tcolorbox}
+When Assumption FD.4 holds, we sometimes say that the \( x_{itj} \) are \textit{strictly exogenous conditional on the unobserved effect}. The idea is that, once we control for \( a_i \), there is no correlation between the \( x_{isj} \) and the remaining idiosyncratic error, \( u_{it} \), for all \( s \) and \( t \).
+
+As stated, Assumption FD.4 is stronger than necessary. We use this form of the assumption because it emphasizes that we are interested in the equation:
+\[
+\mathbb{E}(y_{it} \mid \mathbf{X}_i, a_i) = \mathbb{E}(y_{it} \mid x_{it1}, \dots, x_{itk}, a_i) = \beta_1 x_{it1} + \dots + \beta_k x_{itk} + a_i,
+\]
+so that the \( \beta_j \) measure partial effects of the observed explanatory variables holding fixed, or “controlling for,” the unobserved effect \( a_i \).
+Nevertheless, an important implication of FD.4, and one that is sufficient for the unbiasedness of the FD estimator, is:
+\[
+\mathbb{E}(\Delta u_{it} \mid \mathbf{X}_i) = 0, \quad t = 2, \dots, T.
+\]
+In fact, for consistency, we can simply assume that \( \Delta x_{itj} \) is uncorrelated with \( \Delta u_{it} \) for all \( t = 2, \dots, T \) and \( j = 1, \dots, k \).
+
+Under these first four assumptions, the first-difference estimators are unbiased. The key assumption is FD.4, which is strict exogeneity of the explanatory variables. Under these same assumptions, we can also show that the FD estimator is consistent with a fixed \( T \) and as \( N \to \infty \) (and perhaps more generally).
+
+The next two assumptions ensure that the standard errors and test statistics resulting from pooled OLS on the first differences are (asymptotically) valid.
+
+\begin{tcolorbox}[colback=blue!5!white, colframe=blue!80!black, title=Assumption FD.5 (Homoskedasticity of Differenced Errors)]
+The variance of the differenced errors, conditional on all explanatory variables, is constant:
+\[
+\text{Var}(\Delta u_{it} \mid \mathbf{X}_i) = \sigma^2, \quad t = 2, \dots, T.
+\]
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=blue!5!white, colframe=blue!80!black, title=Assumption FD.6 (No Serial Correlation of Differenced Errors)]
+For all \( t \ne s \), the \textit{differences} in the idiosyncratic errors are uncorrelated (conditional on all explanatory variables):
+\[
+\text{Cov}(\Delta u_{it}, \Delta u_{is} \mid \mathbf{X}_i) = 0, \quad t \ne s.
+\]
+\end{tcolorbox}
+Assumption FD.5 ensures that the differenced errors, \( \Delta u_{it} \), are homoskedastic. Assumption FD.6 states that the differenced errors are serially uncorrelated, which means that the \( u_{it} \) follow a random walk across time (see Chapter 11). Under Assumptions FD.1 through FD.6, the FD estimator of the \( \beta_j \) is the best linear unbiased estimator (conditional on the explanatory variables).
+
+\begin{tcolorbox}[colback=blue!5!white, colframe=blue!80!black, title=Assumption FD.7(Normality)]
+Conditional on \( \mathbf{X}_i \), the \( \Delta u_{it} \) are independent and identically distributed normal random variables.
+\end{tcolorbox}
+When we add Assumption FD.7, the FD estimators are normally distributed, and the \( t \)- and \( F \)-statistics from pooled OLS on the differences have exact \( t \) and \( F \) distributions. Without FD.7, we can rely on the usual asymptotic approximations.
+
+\subsubsection{Advantages and Disadvantages of FD (for T=2)}
+\begin{itemize}
+    \item \textbf{Advantages:}
+    \begin{itemize}
+        \item Controls for time-constant unobserved heterogeneity (\(a_i\)) potentially correlated with \(x_{it}\).
+        \item Conceptually simple.
+    \end{itemize}
+    \item \textbf{Disadvantages:}
+    \begin{itemize}
+        \item Requires panel data.
+        \item Can reduce regressor variation, leading to imprecise estimates (large SEs).
+        \item Cannot estimate effects of time-invariant variables.
+        \item Can exacerbate measurement error bias.
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Extension to Multiple Explanatory Variables}
+If the original model is \(y_{it} = \beta_0 + \delta_0 d2_t + \beta_1 x_{it1} + \dots + \beta_k x_{itk} + a_i + u_{it}\), the differenced equation is:
+\[ \Delta y_i = \delta_0 + \beta_1 \Delta x_{i1} + \beta_2 \Delta x_{i2} + \dots + \beta_k \Delta x_{ik} + \Delta u_i \]
+This is estimated by OLS.
+
+\newpage
+
+
+\section{Advanced Panel Data Methods}
+
+\subsection{Fixed Effects Estimation}
+The goal is to eliminate the time-constant unobserved effect \(a_i\).
+
+\subsubsection{Derivation}
+Consider the model for unit \(i\) at time \(t\):
+\begin{equation} \label{eq:fe_original}
+y_{it} = \beta_1 x_{it1} + \dots + \beta_k x_{itk} + a_i + u_{it}, \quad t=1, \dots, T
+\end{equation}
+\begin{enumerate}
+    \item \textbf{Average over time for each unit \(i\):}
+    Let \(\bar{y}_i = \frac{1}{T}\sum_{t=1}^{T} y_{it}\), \(\bar{x}_{ij} = \frac{1}{T}\sum_{t=1}^{T} x_{itj}\), and \(\bar{u}_i = \frac{1}{T}\sum_{t=1}^{T} u_{it}\).
+    Since \(a_i\) is constant over time for unit \(i\), \(\frac{1}{T}\sum_{t=1}^{T} a_i = a_i\).
+    The time-averaged equation is:
+    \begin{equation} \label{eq:fe_averaged}
+    \bar{y}_i = \beta_1 \bar{x}_{i1} + \dots + \beta_k \bar{x}_{ik} + a_i + \bar{u}_i
+    \end{equation}
+    \item \textbf{Subtract the averaged equation from the original equation for each \(t\):}
+    \((y_{it} - \bar{y}_i) = \beta_1(x_{it1} - \bar{x}_{i1}) + \dots + \beta_k(x_{itk} - \bar{x}_{ik}) + (a_i - a_i) + (u_{it} - \bar{u}_i)\)
+    \item \textbf{The Time-Demeaned (or Within-Transformed) Equation:}
+    Let \(\ddot{y}_{it} = y_{it} - \bar{y}_i\), \(\ddot{x}_{itj} = x_{itj} - \bar{x}_{ij}\), \(\ddot{u}_{it} = u_{it} - \bar{u}_i\).
+    \begin{equation} \label{eq:fe_demeaned}
+    \ddot{y}_{it} = \beta_1 \ddot{x}_{it1} + \dots + \beta_k \ddot{x}_{itk} + \ddot{u}_{it}
+    \end{equation}
+    The unobserved effect \(a_i\) is eliminated.
+\end{enumerate}
+\textbf{Fixed Effects (FE) Estimator (or Within Estimator):} Pooled OLS applied to the time-demeaned equation \eqref{eq:fe_demeaned}.
+
+\subsubsection{Key Characteristics and Assumptions of FE}
+\begin{itemize}
+    \item \textbf{Eliminates Time-Constant Variables:} Variables that do not vary over time for any unit are removed by demeaning (\(\ddot{x}_{itj}=0\) if \(x_{itj}\) is time-constant).
+    \item \textbf{Allows \(Cov(x_{itj}, a_i) \neq 0\):} This is a major strength. Because of this, any explanatory variable that is constant over time for all \textit{i} gets swept away by the fixed effects transformation: $\ddot{x}_{it} = 0$ for all \textit{i} and \textit{t}, if $x_{it}$ is constant across \textit{t}. Therefore, we cannot include variables such as place of birth or a city's distance from a river.
+    \item \textbf{Strict Exogeneity of \(u_{it}\):} For unbiasedness/consistency, \(u_{it}\) must be uncorrelated with \(x_{isj}\) in \textit{all} time periods \(s\) and \(t\) for a given unit \(i\).
+    \item For standard OLS inference on demeaned data to be valid, \(u_{it}\) are assumed homoskedastic and serially uncorrelated. Robust standard errors can be used otherwise.
+\end{itemize}
+
+\subsubsection{Degrees of Freedom (df)}
+\begin{itemize}
+    \item For a balanced panel with \(N\) units and \(T\) time periods, and \(k\) explanatory variables in the demeaned model:
+    \[ df = NT - N - k = N(T-1) - k \]
+    One df is lost for each unit due to the demeaning process.
+\end{itemize}
+
+\subsubsection{The Dummy Variable Regression (Alternative View of FE)}
+\begin{itemize}
+    \item Treats \(a_i\) as parameters to estimate by including a dummy variable for each unit \(i\) in the original model (plus time dummies and regressors \(x_{itj}\)).
+    \item OLS on this dummy variable regression yields \textbf{identical \(\hat{\beta}_j\)} and standard errors as the FE estimator from time-demeaning.
+    \item Impractical for large \(N\).
+    \item Estimates of \(\hat{a}_i\) can be recovered: \(\hat{a}_i = \bar{y}_i - \sum_{j=1}^{k} \hat{\beta}_j \bar{x}_{ij}\). These are unbiased but not consistent as \(N \to \infty\) with fixed \(T\).
+    \item The ``intercept'' often reported by FE software is \(\frac{1}{N}\sum \hat{a}_i\). In other words, the overall intercept is actually the average of
+the individual-specific intercepts, which is an unbiased, consistent estimator of
+$\alpha = \mathbb{E}(a_i)$
+\end{itemize}
+
+\subsubsection{Fixed Effects (FE) vs. First Differencing (FD)}
+\begin{itemize}
+    \item \textbf{If T=2:} FE and FD estimators are identical (with appropriate intercept handling).
+    \item \textbf{If T \(\ge\) 3:}
+    \begin{itemize}
+        \item \textbf{Efficiency:} Depends on serial correlation in \(u_{it}\).
+        \begin{itemize}
+            \item If \(u_{it}\) are serially uncorrelated, FE is more efficient. Because the unobserved effects model is typically stated (sometimes only implicitly) with serially uncorrelated idiosyncratic errors, the FE estimator is used more than the FD estimator. 
+            \item If \(u_{it}\) follow a random walk, FD is more efficient.
+        \end{itemize}
+        \item \textbf{Strict Exogeneity Violations (e.g., lagged dependent variable):} FE bias tends to \(0\) as \(T \to \infty\); FD bias does not. FE often preferred if \(T > 2\).
+    \end{itemize}
+    \item When \textit{T} is large, and especially when \textit{N} is not very large (for example, \textit{N} = 20 and \textit{T} = 30), we must exercise caution in using the fixed effects estimator. Although exact distributional results hold for any \textit{N} and \textit{T} under the classical fixed effects assumptions, inference can be very sensitive to violations of the assumptions when \textit{N} is small and \textit{T} is large.
+    \begin{itemize}
+        \item First differencing has the advantage of turning an integrated time series process into a weakly dependent process. Therefore, if we apply first differencing, we can appeal to the central limit theorem even in cases where \textit{T} is larger than \textit{N}.
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Fixed Effects with Unbalanced Panels}
+\begin{itemize}
+    \item \textbf{Unbalanced Panel:} Units observed for different numbers of time periods (\(T_i\)).
+    \item \textbf{Mechanics:} Time-demeaning for unit \(i\) uses its own available \(T_i\) observations.
+    \item Units with \(T_i=1\) (one observation) drop out (no within-unit variation).
+    \item \(df = (\sum_{i=1}^{N} T_i) - N - k\).
+    \item \textbf{Critical Issue: Reason for Unbalance.}
+    \begin{itemize}
+        \item If missingness is uncorrelated with \(u_{it}\), FE is generally fine.
+        \item If attrition (units dropping out) is correlated with \(u_{it}\), FE estimates can suffer from selection bias.
+        \item FE allows attrition to be correlated with the time-constant \(a_i\).
+    \end{itemize}
+\end{itemize}
+For general missing data patterns, FE has an advantage over FD. Namely, FE maximizes the number of observations used in estimation, whereas FD only uses a time period \textit{t} if time periods \textit{t} and $t - 1$ both include a full set of observations.
+
+\subsection{Random Effects Models}
+
+The model is the same unobserved effects model:
+\begin{equation} \label{eq:re_model_original}
+y_{it} = \beta_0 + \beta_1 x_{it1} + \dots + \beta_k x_{itk} + a_i + u_{it}
+\end{equation}
+where \(a_i\) is the time-constant unobserved individual effect, and \(u_{it}\) is the idiosyncratic error.
+
+\subsubsection{The Crucial Random Effects Assumption}
+\begin{itemize}
+    \item The unobserved effect \(a_i\) is \textbf{uncorrelated} with all explanatory variables \(x_{itj}\) in all time periods:
+    \[ Cov(x_{itj}, a_i) = 0 \quad \text{for all } t, j \]
+    \item This is a stronger assumption than in Fixed Effects (FE).
+\end{itemize}
+
+\subsubsection{The Composite Error Term (\(v_{it} = a_i + u_{it}\))}
+If \(Cov(x_{itj}, a_i) = 0\), \(a_i\) can be treated as part of the error.
+The model becomes: \(y_{it} = \beta_0 + \sum_{j=1}^{k} \beta_j x_{itj} + v_{it}\).
+
+\paragraph{Properties of \(v_{it}\)}
+Assuming \(E(a_i)=0, E(u_{it})=0, Var(a_i)=\sigma_a^2, Var(u_{it})=\sigma_u^2, Cov(a_i, u_{it})=0, Cov(u_{it}, u_{is})=0 \text{ for } t \neq s\).
+\begin{enumerate}
+    \item \textbf{Variance:}
+    \[ Var(v_{it}) = Var(a_i + u_{it}) = Var(a_i) + Var(u_{it}) = \sigma_a^2 + \sigma_u^2 \]
+    \item \textbf{Covariance (for \(t \neq s\)):}
+    \[ Cov(v_{it}, v_{is}) = Cov(a_i + u_{it}, a_i + u_{is}) = Var(a_i) = \sigma_a^2 \]
+    This implies \(v_{it}\) is serially correlated for a given individual \(i\).
+    \item \textbf{Serial Correlation (for \(t \neq s\)):}
+    \[ Corr(v_{it}, v_{is}) = \frac{Cov(v_{it}, v_{is})}{\sqrt{Var(v_{it})Var(v_{is})}} = \frac{\sigma_a^2}{\sigma_a^2 + \sigma_u^2} \]
+\end{enumerate}
+\textbf{Implication for Pooled OLS:} Consistent coefficients (if RE assumption holds) but incorrect standard errors and inefficient estimates due to ignoring serial correlation.
+
+\subsubsection{Estimation: Generalized Least Squares (GLS)}
+GLS is used to obtain efficient estimates.
+\paragraph{The GLS Transformation (Quasi-Demeaning)}
+Define the transformation parameter:
+\begin{equation} \label{eq:theta_re}
+\theta = 1 - \sqrt{\frac{\sigma_u^2}{\sigma_u^2 + T\sigma_a^2}}
+\end{equation}
+where \(T\) is the number of time periods. Note \(0 \le \theta \le 1\).
+The transformed equation is:
+\begin{equation} \label{eq:re_transformed}
+(y_{it} - \theta \bar{y}_i) = \beta_0(1-\theta) + \sum_{j=1}^{k} \beta_j (x_{itj} - \theta \bar{x}_{ij}) + (v_{it} - \theta \bar{v}_i)
+\end{equation}
+OLS on this equation yields the GLS estimator. The transformed error \((v_{it} - \theta \bar{v}_i)\) is serially uncorrelated.
+
+\subsubsection{Feasible GLS (The Random Effects Estimator)}
+\begin{itemize}
+    \item Since \(\sigma_u^2\) and \(\sigma_a^2\) (and thus \(\theta\)) are unknown, they are estimated from the data (e.g., using FE residuals for \(\hat{\sigma}_u^2\)).
+    \item Using an estimated \(\hat{\theta}\) in the transformation gives the \textbf{Random Effects (RE) estimator}.
+    \item RE estimator is consistent and asymptotically normal as \(N \to \infty\) (fixed \(T\)).
+\end{itemize}
+
+\subsubsection{Advantages of Random Effects}
+\begin{itemize}
+    \item Can estimate coefficients on \textbf{time-constant explanatory variables} (unlike FE).
+    \item More \textbf{efficient} than FE if the RE assumption \(Cov(x_{itj}, a_i)=0\) holds.
+\end{itemize}
+
+\subsubsection{Relationship to Pooled OLS and Fixed Effects via \(\theta\)}
+\begin{itemize}
+    \item If \(\theta \approx 0\) (e.g., \(\sigma_a^2\) small or \(T\) small), RE estimates \(\approx\) Pooled OLS estimates.
+    \item If \(\theta \approx 1\) (e.g., \(\sigma_a^2\) large or \(T\) large), RE estimates \(\approx\) FE estimates.
+    \item Bias from correlated \(a_i\) is attenuated by factor \((1-\theta)\) in RE. As $\theta \rightarrow 1 $ the bias term goes to zero, as it must because the RE estimator tends to the FE estimator. If $\theta$ is close to zero, we are leaving a larger fraction of the unobserved effect in the error term, and, as a consequence, the asymptotic bias of the RE estimator will be larger.
+\end{itemize}
+
+\subsubsection{Random Effects vs. Pooled OLS}
+\begin{itemize}
+    \item \textbf{Breusch-Pagan Test:} Tests \(H_0: \sigma_a^2 = 0\). If rejected, RE or Pooled OLS with robust SEs preferred over simple Pooled OLS. Does not test \(Cov(x_{itj}, a_i)=0\).
+    \item If RE assumptions hold, RE is more efficient than Pooled OLS.
+\end{itemize}
+
+\subsubsection{Random Effects vs. Fixed Effects (The Key Decision)}
+\begin{itemize}
+    \item \textbf{Core Issue:} Is \(a_i\) correlated with any \(x_{itj}\)?
+    \begin{itemize}
+        \item If \(Cov(x_{itj}, a_i) \neq 0 \implies\) RE is inconsistent; FE is consistent.
+        \item If \(Cov(x_{itj}, a_i) = 0 \implies\) Both consistent; RE is more efficient.
+    \end{itemize}
+    \item \textbf{Hausman Test:} Compares RE and FE coefficients on time-varying variables.
+    \begin{itemize}
+        \item \(H_0\): Differences are not systematic (\(Cov(x_{itj}, a_i)=0\)).
+        \item If \(H_0\) is rejected, FE is preferred.
+    \end{itemize}
+    \item Choice should be based on the plausibility of \(Cov(x_{itj}, a_i)=0\), not philosophical views of \(a_i\).
+\end{itemize}
+
+\subsubsection{Deeper Dive: Feasible Generalized Least Squares (FGLS) for Random Effects}
+The Random Effects (RE) model \(y_{it} = \beta_0 + X_{it}\boldsymbol{\beta} + a_i + u_{it}\) has a composite error \(v_{it} = a_i + u_{it}\). For a given unit \(i\), the vector of errors \(\mathbf{v}_i = (v_{i1}, \dots, v_{iT})'\) has a covariance matrix:
+\[ \Omega_i = E(\mathbf{v}_i \mathbf{v}_i') = \sigma_u^2 I_T + \sigma_a^2 J_T \]
+where \(I_T\) is a \(T \times T\) identity matrix and \(J_T\) is a \(T \times T\) matrix of ones. This non-spherical error structure (\(\Omega_i \neq \sigma_v^2 I_T\)) means Pooled OLS is inefficient and its standard errors are invalid.
+
+\paragraph{Generalized Least Squares (GLS) - The Ideal:}
+If \(\Omega_i\) (and thus the full \(NT \times NT\) block-diagonal error covariance matrix \(\Omega\)) were known, the GLS estimator is BLUE:
+\[ \hat{\boldsymbol{\beta}}_{GLS} = (\mathbf{X}' \Omega^{-1} \mathbf{X})^{-1} \mathbf{X}' \Omega^{-1} \mathbf{y} \]
+This can be achieved by finding a transformation matrix \(P\) such that \(P_i \Omega_i P_i' = \sigma^2 I_T\), and then applying OLS to the transformed model \(P_i \mathbf{y}_i = P_i \mathbf{X}_i \boldsymbol{\beta} + P_i \mathbf{v}_i\). The RE transformation \(y_{it} - \theta \bar{y}_i\) is this operation.
+
+\paragraph{Feasible GLS (FGLS) - The Practical Approach:}
+Since \(\Omega_i\) depends on unknown \(\sigma_a^2\) and \(\sigma_u^2\), FGLS proceeds in two steps:
+
+\subparagraph{Step 1: Estimate \(\sigma_u^2\) and \(\sigma_a^2\).}
+\begin{itemize}
+    \item \textbf{Estimating \(\sigma_u^2\)} (variance of idiosyncratic error):
+    Use residuals from a Fixed Effects (FE) regression. Let \(\hat{\ddot{u}}_{it}\) be the FE residuals.
+    \[ \hat{\sigma}_u^2 = \frac{\sum_{i=1}^{N}\sum_{t=1}^{T} \hat{\ddot{u}}_{it}^2}{N(T-1) - k_{\text{FE}}} \]
+    (Denominator is df of FE: \(NT-N-k_{\text{FE}}\) if an overall intercept is absorbed or \(N(T-1)-k_{\text{FE}}\)).
+
+    \item \textbf{Estimating \(\sigma_a^2\)} (variance of individual effect):
+    Commonly, from the residuals of a "Between Regression" (\(\bar{y}_i\) on \(\bar{X}_i\)). The error in this regression is \(\epsilon_i = a_i + \bar{u}_i\), with \(Var(\epsilon_i) = \sigma_a^2 + \sigma_u^2/T\). Let \(\hat{\sigma}_{BE}^2\) be the estimated variance of these residuals.
+    \[ \hat{\sigma}_a^2 = \hat{\sigma}_{BE}^2 - \frac{\hat{\sigma}_u^2}{T} \]
+    Alternatively, using Pooled OLS residuals \(\hat{v}_{it}\), \(\hat{\sigma}_v^2 = \text{variance of } \hat{v}_{it}\). Then \(\hat{\sigma}_a^2 = \hat{\sigma}_v^2 - \hat{\sigma}_u^2\).
+    If \(\hat{\sigma}_a^2 < 0\), it is typically set to 0.
+\end{itemize}
+
+\subparagraph{Step 2: Perform GLS using estimated \(\hat{\Omega}_i\).}
+This involves calculating the estimated RE transformation parameter:
+\[ \hat{\theta} = 1 - \sqrt{\frac{\hat{\sigma}_u^2}{\hat{\sigma}_u^2 + T\hat{\sigma}_a^2}} \]
+(If \(\hat{\sigma}_a^2 = 0\), then \(\hat{\theta}=0\)).
+Then, transform the data ("quasi-demeaning"):
+\begin{align*}
+\tilde{y}_{it} &= y_{it} - \hat{\theta} \bar{y}_i \\
+\tilde{x}_{itj} &= x_{itj} - \hat{\theta} \bar{x}_{ij} \quad (\text{for each regressor } j) \\
+\text{The intercept becomes } &\beta_0^* = \beta_0(1-\hat{\theta})
+\end{align*}
+The FGLS estimator (the RE estimator) is obtained by OLS on the transformed model:
+\[ \tilde{y}_{it} = \beta_0^* + \beta_1 \tilde{x}_{it1} + \dots + \beta_k \tilde{x}_{itk} + \text{transformed error} \]
+
+\paragraph{Mathematical Intuition for the \(\theta\) Transformation:}
+The transformation \(P_i\) that results in \(y_{it} - \theta \bar{y}_i\) is constructed such that if it were applied to the true errors \(\mathbf{v}_i\), the transformed errors \(P_i \mathbf{v}_i\) would have a covariance matrix \(\sigma_u^2 I_T\). This means the transformed errors are homoskedastic and serially uncorrelated. The specific formula for \(\theta\) (equation \ref{eq:theta_re}) is derived from the structure of \(\Omega_i^{-1}\) or by directly solving for a transformation that diagonalizes \(\Omega_i\).
+Essentially, the transformation optimally combines information from the within-unit variation (like FE) and the between-unit variation.
+\begin{itemize}
+    \item If \(T \to \infty\), \(\theta \to 1\). RE approaches FE, as \(\bar{y}_i\) becomes a perfect estimate of the unit-specific mean component involving \(a_i\).
+    \item If \(\sigma_a^2 \to 0\), \(\theta \to 0\). RE approaches Pooled OLS, as there's no individual random effect.
+\end{itemize}
+
+\paragraph{Properties of FGLS (RE Estimator):}
+\begin{itemize}
+    \item \textbf{Consistency:} Consistent if \(\hat{\sigma}_u^2\) and \(\hat{\sigma}_a^2\) are consistent estimators and standard exogeneity \(E(X_{it}'v_{it})=0\) holds.
+    \item \textbf{Asymptotic Normality:} Typically asymptotically normal.
+    \item \textbf{Asymptotic Efficiency:} Achieves the same asymptotic variance as true GLS; more efficient than Pooled OLS if \(\sigma_a^2 > 0\).
+    \item \textbf{Finite Sample Properties:} Can be sensitive to the quality of \(\hat{\sigma}_u^2, \hat{\sigma}_a^2\). Not always superior to OLS with robust SEs in small samples. Iteration (re-estimating \(\Omega\) and \(\beta\)) does not change asymptotic properties if first-step estimates are consistent.
+\end{itemize}
+
+
+
+\end{document}
